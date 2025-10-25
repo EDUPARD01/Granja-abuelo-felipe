@@ -629,32 +629,44 @@
             });
         });
 
-        // ==================== GUARDAR EN FIREBASE ====================
-        async function guardarPedidoFirebase(pedidoData) {
-            try {
-                const pedidoId = 'PED' + Date.now();
-                
-                await db.collection('pedidos').doc(pedidoId).set({
-                    id: pedidoId,
-                    cliente: pedidoData.nombre,
-                    telefono: pedidoData.telefono,
-                    direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
-                    productos: pedidoData.productos,
-                    total: pedidoData.total,
-                    fecha: firebase.firestore.FieldValue.serverTimestamp(),
-                    estado: 'pendiente',
-                    repartidor: ''
-                });
-                
-                console.log('✅ Pedido guardado en Firebase:', pedidoId);
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Error Firebase:', error);
-                return false;
-            }
+       // ==================== FUNCIÓN MEJORADA PARA GUARDAR PEDIDO ====================
+async function guardarPedidoFirebase(pedidoData) {
+    try {
+        const pedidoId = 'PED' + Date.now();
+        
+        // Incluir coordenadas exactas si están disponibles
+        const datosPedido = {
+            id: pedidoId,
+            cliente: pedidoData.nombre,
+            telefono: pedidoData.telefono,
+            direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
+            productos: pedidoData.productos,
+            total: pedidoData.total,
+            fecha: firebase.firestore.FieldValue.serverTimestamp(),
+            estado: 'pendiente',
+            repartidor: ''
+        };
+
+        // Si es Coronel Oviedo y hay datos del mapa, agregar coordenadas exactas
+        if (pedidoData.ciudad === 'Coronel Oviedo' && map) {
+            datosPedido.direccion += ' | ' + selectedAddress;
+            datosPedido.coordenadas = {
+                lat: parseFloat(selectedLat),
+                lng: parseFloat(selectedLng)
+            };
+            datosPedido.mapa = googleMapsLink;
         }
 
+        await db.collection('pedidos').doc(pedidoId).set(datosPedido);
+        
+        console.log('✅ Pedido guardado en Firebase:', pedidoId);
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Error Firebase:', error);
+        return false;
+    }
+}
         // ==================== FUNCIÓN PRINCIPAL ====================
         async function enviarPedidoSistema() {
             if (!validateStep3()) {
