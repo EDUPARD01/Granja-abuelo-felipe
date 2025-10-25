@@ -774,22 +774,26 @@ function initMap() {
         })
     }).addTo(map);
     
-    // Zonas predefinidas de Coronel Oviedo
+    // ZONAS PREDEFINIDAS DE CORONEL OVIEDO (Actualizadas)
     const zonasCoronelOviedo = [
-        { coords: [-25.4481, -56.4428], nombre: 'Centro de Coronel Oviedo' },
+        { coords: [-25.4481, -56.4428], nombre: 'Centro - Plaza Principal' },
         { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
         { coords: [-25.4550, -56.4350], nombre: 'Barrio Santa Teresa' },
         { coords: [-25.4380, -56.4500], nombre: 'Barrio San Antonio' },
         { coords: [-25.4600, -56.4300], nombre: 'Barrio San Roque' },
         { coords: [-25.4350, -56.4250], nombre: 'Barrio San Blas' },
         { coords: [-25.4300, -56.4550], nombre: 'Barrio San Pablo' },
-        { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' }
+        { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' },
+        { coords: [-25.4420, -56.4250], nombre: 'Barrio Santa Lucía' },
+        { coords: [-25.4500, -56.4550], nombre: 'Barrio Virgen del Rosario' },
+        { coords: [-25.4250, -56.4400], nombre: 'Barrio San Rafael' },
+        { coords: [-25.4700, -56.4350], nombre: 'Barrio San Juan' }
     ];
     
     // Función para encontrar zona más cercana
     function encontrarZonaCercana(lat, lng) {
         let zonaMasCercana = 'Ubicación en Coronel Oviedo';
-        let distanciaMinima = Infinity;
+        let distanciaMinima = 0.02; // Radio de ~2km
         
         for (const zona of zonasCoronelOviedo) {
             const distancia = Math.sqrt(
@@ -812,11 +816,33 @@ function initMap() {
         selectedLng = lng.toFixed(6);
         googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
         
-        // Encontrar zona
+        // Encontrar zona más cercana
         const zona = encontrarZonaCercana(lat, lng);
-        selectedAddress = `${zona} (Coordenadas: ${selectedLat}, ${selectedLng})`;
+        selectedAddress = `${zona}`;
         
         updateLocationDisplay();
+        
+        // Mostrar notificación de zona detectada
+        mostrarNotificacionZona(zona);
+    }
+    
+    // Mostrar notificación de zona detectada
+    function mostrarNotificacionZona(zona) {
+        const notificacion = document.createElement('div');
+        notificacion.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-bounce';
+        notificacion.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Zona detectada: <strong>${zona}</strong></span>
+            </div>
+        `;
+        
+        document.body.appendChild(notificacion);
+        
+        // Remover después de 3 segundos
+        setTimeout(() => {
+            document.body.removeChild(notificacion);
+        }, 3000);
     }
     
     // Evento para actualizar ubicación al arrastrar
@@ -832,7 +858,7 @@ function initMap() {
         marker.setLatLng(position);
     });
     
-    // Agregar marcadores de zonas principales
+    // Agregar marcadores de zonas principales (opcional - para referencia)
     zonasCoronelOviedo.forEach(zona => {
         L.marker(zona.coords)
             .addTo(map)
@@ -840,8 +866,93 @@ function initMap() {
             .openPopup();
     });
     
+    // Agregar control de búsqueda
+    const searchControl = L.control({
+        position: 'topright'
+    });
+    
+    searchControl.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'search-control');
+        div.innerHTML = `
+            <div class="bg-white p-2 rounded-lg shadow-lg">
+                <input type="text" id="search-input" placeholder="Buscar en el mapa..." 
+                       class="w-full p-2 border rounded focus:ring-2 focus:ring-green-500">
+                <button onclick="buscarEnMapa()" class="w-full mt-2 bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                    <i class="fas fa-search mr-2"></i>Buscar
+                </button>
+            </div>
+        `;
+        return div;
+    };
+    
+    searchControl.addTo(map);
+    
     updateLocationDisplay();
 }
+
+// Función para buscar en el mapa
+function buscarEnMapa() {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput.value.toLowerCase();
+    
+    if (!query) return;
+    
+    // Búsqueda local en zonas predefinidas
+    const zonas = [
+        'centro', 'san miguel', 'santa teresa', 'san antonio', 
+        'san roque', 'san blas', 'san pablo', 'san josé',
+        'santa lucía', 'virgen del rosario', 'san rafael', 'san juan'
+    ];
+    
+    let zonaEncontrada = null;
+    
+    for (const zona of zonas) {
+        if (query.includes(zona)) {
+            // Encontrar coordenadas de la zona
+            const zonasCoronelOviedo = [
+                { coords: [-25.4481, -56.4428], nombre: 'Centro - Plaza Principal' },
+                { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
+                { coords: [-25.4550, -56.4350], nombre: 'Barrio Santa Teresa' },
+                { coords: [-25.4380, -56.4500], nombre: 'Barrio San Antonio' },
+                { coords: [-25.4600, -56.4300], nombre: 'Barrio San Roque' },
+                { coords: [-25.4350, -56.4250], nombre: 'Barrio San Blas' },
+                { coords: [-25.4300, -56.4550], nombre: 'Barrio San Pablo' },
+                { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' },
+                { coords: [-25.4420, -56.4250], nombre: 'Barrio Santa Lucía' },
+                { coords: [-25.4500, -56.4550], nombre: 'Barrio Virgen del Rosario' },
+                { coords: [-25.4250, -56.4400], nombre: 'Barrio San Rafael' },
+                { coords: [-25.4700, -56.4350], nombre: 'Barrio San Juan' }
+            ];
+            
+            zonaEncontrada = zonasCoronelOviedo.find(z => 
+                z.nombre.toLowerCase().includes(zona)
+            );
+            break;
+        }
+    }
+    
+    if (zonaEncontrada) {
+        map.setView(zonaEncontrada.coords, 16);
+        marker.setLatLng(zonaEncontrada.coords);
+        actualizarUbicacion(zonaEncontrada.coords[0], zonaEncontrada.coords[1]);
+        
+        // Mostrar notificación
+        mostrarNotificacionZona(`Encontrado: ${zonaEncontrada.nombre}`);
+    } else {
+        alert('❌ Zona no encontrada. Intente con: Centro, San Miguel, Santa Teresa, etc.');
+    }
+}
+
+function updateLocationDisplay() {
+    document.getElementById('selected-lat').textContent = selectedLat;
+    document.getElementById('selected-lng').textContent = selectedLng;
+    document.getElementById('location-link').textContent = googleMapsLink;
+    document.getElementById('location-link').href = googleMapsLink;
+    document.getElementById('selected-address').textContent = selectedAddress;
+}
+
+// ELIMINA completamente la función reverseGeocode si existe
+// No la necesitamos más
         // ==================== SISTEMA DE PASOS ====================
         function changeStep(step) {
             steps.forEach(s => s.classList.remove('active'));
