@@ -11,8 +11,8 @@ const firebaseConfig = {
 // CONFIGURACIÓN REPARTIDORES
 const CONFIG = {
     REPARTIDORES: {
-        'eduardo': '463756',
-        'juan': '1234',
+        'eduardo': '6575665e',
+        'Ronaldo': '3558111r',
         'maria': '1234',
         'admin': 'admin123'
     }
