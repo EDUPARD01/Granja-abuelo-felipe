@@ -1,6 +1,19 @@
-// CONFIGURACIÓN
+// CONFIGURACIÓN FIREBASE - MISMA CONFIGURACIÓN
+const firebaseConfig = {
+    apiKey: "AIzaSyBi-UfoiEzwiMRv_9nH9ex_NWm7xVgtbEo",
+    authDomain: "granja-abuelo-felipe.firebaseapp.com",
+    projectId: "granja-abuelo-felipe",
+    storageBucket: "granja-abuelo-felipe.firebasestorage.app",
+    messagingSenderId: "164634430679",
+    appId: "1:164634430679:web:31bef3f832a6ccda26f492"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// CONFIGURACIÓN REPARTIDORES
 const CONFIG = {
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbygzZ_F3Yi_Oo_AccXKMa6fbbtHWZUjlQQtdDz7_2QB8Y3UME5upr_JZi51NYJz-0Ee/exec',
     REPARTIDORES: {
         'juan': '1234',
         'carlos': '1234', 
@@ -29,6 +42,37 @@ const acceptPedido = document.getElementById('acceptPedido');
 const completePedido = document.getElementById('completePedido');
 const pedidoDetailContent = document.getElementById('pedidoDetailContent');
 
+// ==================== ESCUCHAR PEDIDOS EN TIEMPO REAL ====================
+function inicializarFirebase() {
+    // Escuchar cambios en pedidos pendientes
+    db.collection('pedidos')
+        .where('estado', '==', 'pendiente')
+        .onSnapshot((snapshot) => {
+            const pedidos = [];
+            snapshot.forEach(doc => {
+                pedidos.push(doc.data());
+            });
+            estadoApp.pedidos = pedidos;
+            actualizarUI();
+            console.log('Pedidos actualizados:', pedidos.length);
+        });
+}
+
+// ==================== ACTUALIZAR PEDIDO ====================
+async function actualizarEstadoPedido(pedidoId, nuevoEstado) {
+    try {
+        await db.collection('pedidos').doc(pedidoId).update({
+            estado: nuevoEstado,
+            repartidor: estadoApp.repartidor
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error actualizando pedido:', error);
+        return false;
+    }
+}
+
 // ==================== LOGIN ====================
 loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -43,62 +87,29 @@ loginForm.addEventListener('submit', function(e) {
         loginScreen.classList.add('hidden');
         mainApp.classList.remove('hidden');
         
-        cargarPedidosReales();
+        // Inicializar Firebase cuando el repartidor hace login
+        inicializarFirebase();
     } else {
         alert('❌ Usuario o contraseña incorrectos');
     }
 });
 
-// ==================== CARGAR PEDIDOS REALES ====================
-async function cargarPedidosReales() {
-    try {
-        const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=getPedidos');
-        const data = await response.json();
-        
-        // Filtrar solo pedidos pendientes
-        estadoApp.pedidos = data.filter(pedido => pedido.estado === 'pendiente');
-        
-        actualizarUI();
-        
-    } catch (error) {
-        console.error('Error cargando pedidos:', error);
-        // Fallback: mostrar mensaje pero continuar
-        estadoApp.pedidos = [];
-        actualizarUI();
-    }
-}
-
-// ==================== ACTUALIZAR PEDIDO ====================
-async function actualizarEstadoPedido(pedidoId, nuevoEstado) {
-    try {
-        const updateData = {
-            action: 'updatePedido',
-            pedidoId: pedidoId,
-            estado: nuevoEstado,
-            repartidor: estadoApp.repartidor
-        };
-        
-        const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updateData)
-        });
-        
-        const result = await response.json();
-        return result.status === 'success';
-        
-    } catch (error) {
-        console.error('Error actualizando pedido:', error);
-        return false;
-    }
-}
+// ==================== LOGOUT ====================
+logoutBtn.addEventListener('click', function() {
+    estadoApp.repartidor = null;
+    estadoApp.pedidos = [];
+    
+    mainApp.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+    
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+});
 
 // ==================== INTERFAZ ====================
 function actualizarUI() {
-    const pedidosPendientes = estadoApp.pedidos.filter(p => p.estado === 'pendiente').length;
-    const pedidosHoy = estadoApp.pedidos.length; // Todos son de hoy
+    const pedidosPendientes = estadoApp.pedidos.length;
+    const pedidosHoy = estadoApp.pedidos.length;
     
     document.getElementById('pedidosPendientes').textContent = pedidosPendientes;
     document.getElementById('pedidosHoy').textContent = pedidosHoy;
@@ -124,24 +135,11 @@ function renderizarPedidos() {
         const pedidoElement = document.createElement('div');
         pedidoElement.className = `bg-white rounded-xl p-4 shadow-sm border-l-4 fade-in pedido-pendiente`;
         
-        // Parsear productos si es string
         let productosTexto = '';
-        if (typeof pedido.productos === 'string') {
-            try {
-                const productos = JSON.parse(pedido.productos);
-                productos.forEach(prod => {
-                    productosTexto += `${prod.nombre} x${prod.cantidad}, `;
-                });
-                productosTexto = productosTexto.slice(0, -2); // Remover última coma
-            } catch (e) {
-                productosTexto = pedido.productos;
-            }
-        } else {
-            pedido.productos.forEach(prod => {
-                productosTexto += `${prod.nombre} x${prod.cantidad}, `;
-            });
-            productosTexto = productosTexto.slice(0, -2);
-        }
+        pedido.productos.forEach(prod => {
+            productosTexto += `${prod.nombre} x${prod.cantidad}, `;
+        });
+        productosTexto = productosTexto.slice(0, -2);
         
         pedidoElement.innerHTML = `
             <div class="flex justify-between items-start mb-2">
@@ -176,20 +174,8 @@ function mostrarDetallePedido(pedidoId) {
     const pedido = estadoApp.pedidos.find(p => p.id === pedidoId);
     estadoApp.pedidoSeleccionado = pedido;
     
-    // Parsear productos
-    let productos = [];
-    if (typeof pedido.productos === 'string') {
-        try {
-            productos = JSON.parse(pedido.productos);
-        } catch (e) {
-            productos = [{nombre: pedido.productos, cantidad: 1, precio: 0}];
-        }
-    } else {
-        productos = pedido.productos;
-    }
-    
     let productosHTML = '';
-    productos.forEach(prod => {
+    pedido.productos.forEach(prod => {
         const subtotal = prod.precio * prod.cantidad;
         productosHTML += `
             <div class="flex justify-between py-2 border-b border-gray-100">
@@ -227,7 +213,7 @@ function mostrarDetallePedido(pedidoId) {
             <div>
                 <h4 class="font-bold text-gray-700 mb-2">📋 Información</h4>
                 <p class="text-gray-600">ID: ${pedido.id}</p>
-                <p class="text-gray-600">Fecha: ${new Date(pedido.fecha).toLocaleString('es-PY')}</p>
+                <p class="text-gray-600">Fecha: ${new Date(pedido.fecha?.toDate()).toLocaleString('es-PY')}</p>
                 <p class="text-gray-600">Estado: <span class="font-semibold text-yellow-600">PENDIENTE</span></p>
             </div>
         </div>
@@ -241,27 +227,16 @@ function mostrarDetallePedido(pedidoId) {
 }
 
 // ==================== EVENTOS ====================
-logoutBtn.addEventListener('click', function() {
-    estadoApp.repartidor = null;
-    estadoApp.pedidos = [];
-    
-    mainApp.classList.add('hidden');
-    loginScreen.classList.remove('hidden');
-    
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
+refreshBtn.addEventListener('click', function() {
+    // Recargar pedidos manualmente
+    inicializarFirebase();
 });
-
-refreshBtn.addEventListener('click', cargarPedidosReales);
 
 acceptPedido.addEventListener('click', async function() {
     if (estadoApp.pedidoSeleccionado) {
         const success = await actualizarEstadoPedido(estadoApp.pedidoSeleccionado.id, 'aceptado');
         
         if (success) {
-            // Remover de la lista local
-            estadoApp.pedidos = estadoApp.pedidos.filter(p => p.id !== estadoApp.pedidoSeleccionado.id);
-            actualizarUI();
             pedidoModal.classList.add('hidden');
             alert('✅ Pedido aceptado correctamente');
         } else {
@@ -275,8 +250,6 @@ completePedido.addEventListener('click', async function() {
         const success = await actualizarEstadoPedido(estadoApp.pedidoSeleccionado.id, 'completado');
         
         if (success) {
-            estadoApp.pedidos = estadoApp.pedidos.filter(p => p.id !== estadoApp.pedidoSeleccionado.id);
-            actualizarUI();
             pedidoModal.classList.add('hidden');
             alert('🎉 Pedido marcado como entregado');
         } else {
@@ -297,13 +270,6 @@ function abrirMapa(direccion) {
 }
 
 // ==================== INICIALIZACIÓN ====================
-// Cargar pedidos cada 30 segundos
-setInterval(() => {
-    if (estadoApp.repartidor) {
-        cargarPedidosReales();
-    }
-}, 30000);
-
 // Service Worker para PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js')
