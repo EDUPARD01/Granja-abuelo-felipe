@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .font-display { font-family: 'Playfair Display', serif; }
         .font-body { font-family: 'Inter', sans-serif; }
@@ -39,6 +40,12 @@
         .step.active {
             display: block;
         }
+        .map-container {
+            display: none;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
         .product-card {
             transition: all 0.3s ease;
             border: 1px solid #e5e7eb;
@@ -52,6 +59,51 @@
         }
         .quantity-btn:hover {
             background-color: #d1d5db;
+        }
+        #interactive-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 0.5rem;
+            z-index: 1;
+        }
+        .map-instructions {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .location-coordinates {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .custom-marker {
+            background: #dc2626;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .custom-marker::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid #dc2626;
+        }
+        .location-link {
+            color: #2563eb;
+            text-decoration: underline;
+            word-break: break-all;
         }
         .loading-overlay {
             display: none;
@@ -98,7 +150,7 @@
     <div id="loadingOverlay" class="loading-overlay">
         <div class="bg-white rounded-lg p-8 text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
-            <p class="text-lg font-semibold text-gray-800">Enviando pedido automáticamente...</p>
+            <p class="text-lg font-semibold text-gray-800">Procesando pedido...</p>
             <p class="text-gray-600">Por favor espere un momento</p>
         </div>
     </div>
@@ -174,9 +226,59 @@
                         </select>
                     </div>
                     
-                    <div>
+                    <!-- Mapa Interactivo para Coronel Oviedo -->
+                    <div id="coronelOviedoMap" class="map-container">
+                        <h4 class="font-medium text-gray-700 mb-3">Seleccione su ubicación exacta en Coronel Oviedo</h4>
+                        
+                        <div class="map-instructions">
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+                                <p class="text-sm text-gray-700">
+                                    <strong>Instrucciones:</strong> Haga clic en el mapa para colocar el marcador en su ubicación exacta. 
+                                    Puede acercar/alejar y mover el mapa para encontrar su dirección precisa.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div id="interactive-map"></div>
+                        
+                        <div class="location-coordinates">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-map-marker-alt text-red-500"></i>
+                                <span class="font-medium">Ubicación seleccionada:</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">Latitud:</span>
+                                    <span id="selected-lat" class="font-mono">-25.4481</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Longitud:</span>
+                                    <span id="selected-lng" class="font-mono">-56.4428</span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <span class="text-gray-600">Dirección aproximada:</span>
+                                <span id="selected-address" class="font-medium">Centro de Coronel Oviedo</span>
+                            </div>
+                            <div class="mt-2" id="location-link-container">
+                                <span class="text-gray-600">Enlace de ubicación:</span>
+                                <a id="location-link" href="#" target="_blank" class="location-link text-sm">
+                                    https://maps.google.com/?q=-25.4481,-56.4428
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Referencia adicional (opcional)</label>
+                            <input type="text" id="locationReference" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Casa color azul, portón negro, a 2 cuadras del supermercado">
+                        </div>
+                    </div>
+                    
+                    <!-- Campo de referencia para otras ciudades -->
+                    <div id="otherCityReference" class="hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Dirección/Referencia *</label>
-                        <textarea id="locationReference" rows="3" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Barrio San Miguel, casa color azul, a 2 cuadras del supermercado..." required></textarea>
+                        <textarea id="locationReferenceOther" rows="3" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Barrio San Miguel, casa color azul, a 2 cuadras del supermercado..." required></textarea>
                     </div>
                     
                     <div class="flex justify-end mt-8">
@@ -302,7 +404,7 @@
             <!-- Paso 3: Confirmación -->
             <div id="step3" class="step bg-white rounded-2xl shadow-lg p-8">
                 <h2 class="font-display text-3xl font-bold text-gray-800 mb-2">Confirmación del Pedido</h2>
-                <p class="text-gray-600 mb-6">Revise su pedido antes de enviarlo automáticamente</p>
+                <p class="text-gray-600 mb-6">Revise su pedido antes de enviarlo al sistema</p>
                 
                 <div class="space-y-6">
                     <!-- Información del Cliente -->
@@ -322,9 +424,13 @@
                                 <p id="summary-city" class="font-medium text-gray-800"></p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600">Dirección</p>
-                                <p id="summary-address" class="font-medium text-gray-800"></p>
+                                <p class="text-sm text-gray-600">Ubicación</p>
+                                <p id="summary-location" class="font-medium text-gray-800"></p>
                             </div>
+                        </div>
+                        <div class="mt-4" id="summary-location-link-container">
+                            <p class="text-sm text-gray-600">Enlace de ubicación:</p>
+                            <a id="summary-location-link" href="#" target="_blank" class="location-link text-sm"></a>
                         </div>
                     </div>
                     
@@ -346,7 +452,7 @@
                             <i class="fas fa-check-circle text-green-500 text-xl"></i>
                             <div>
                                 <h4 class="font-bold text-green-800">¡Pedido enviado con éxito!</h4>
-                                <p class="text-green-700">El pedido se envió automáticamente a WhatsApp. Te contactaremos pronto.</p>
+                                <p class="text-green-700">Su pedido ha sido procesado correctamente. Nos contactaremos pronto.</p>
                             </div>
                         </div>
                     </div>
@@ -356,7 +462,7 @@
                             <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
                             <div>
                                 <h4 class="font-bold text-red-800">Error al enviar el pedido</h4>
-                                <p class="text-red-700">Por favor, contacta al <strong>0976 463756</strong> para completar tu pedido.</p>
+                                <p class="text-red-700">Por favor, contacte al <strong>0976 463756</strong> para completar su pedido.</p>
                             </div>
                         </div>
                     </div>
@@ -366,7 +472,7 @@
                             <i class="fas fa-arrow-left mr-2"></i> Volver a Productos
                         </button>
                         <button id="sendOrder" class="btn-primary flex items-center text-lg px-8 py-4">
-                            <i class="fas fa-robot mr-2"></i> Confirmar y Enviar Automáticamente
+                            <i class="fas fa-paper-plane mr-2"></i> Confirmar y Enviar Pedido
                         </button>
                     </div>
                 </div>
@@ -430,18 +536,23 @@
         </div>
     </footer>
 
-    <!-- JavaScript con Twilio Integration -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
-        // CONFIGURACIÓN TWILIO - TUS DATOS
-        const TWILIO_ACCOUNT_SID = 'AC016d5c020f96851535df910033d35dfb';
-        const TWILIO_AUTH_TOKEN = '33b8884f7686e49ad1b50bf91bb25526';
-        const TU_NUMERO_WHATSAPP = 'whatsapp:+595976463756';
-        const TWILIO_NUMERO = 'whatsapp:+14155238886';
-        const TWILIO_URL = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+        // CONFIGURACIÓN GOOGLE APPS SCRIPT
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbygzZ_F3Yi_Oo_AccXKMa6fbbtHWZUjlQQtdDz7_2QB8Y3UME5upr_JZi51NYJz-0Ee/exec';
 
         // Variables globales
         let currentStep = 1;
-        let products = {
+        let map;
+        let marker;
+        let selectedLat = -25.4481;
+        let selectedLng = -56.4428;
+        let selectedAddress = "Centro de Coronel Oviedo";
+        let googleMapsLink = "https://maps.google.com/?q=-25.4481,-56.4428";
+        
+        const products = {
             leche: { name: "Leche de Cabra Fresca", price: 25000, quantity: 0 },
             queso: { name: "Queso de Cabra", price: 180000, quantity: 0 },
             yogur: { name: "Yogur de Cabra Natural", price: 25000, quantity: 0 },
@@ -450,6 +561,9 @@
         };
 
         // Elementos del DOM
+        const customerCity = document.getElementById('customerCity');
+        const coronelOviedoMap = document.getElementById('coronelOviedoMap');
+        const otherCityReference = document.getElementById('otherCityReference');
         const steps = document.querySelectorAll('.step');
         const progressBar = document.getElementById('progress-bar');
         const loadingOverlay = document.getElementById('loadingOverlay');
@@ -463,9 +577,44 @@
         const backToStep2 = document.getElementById('backToStep2');
         const sendOrder = document.getElementById('sendOrder');
         
-        // ==================== FUNCIÓN PRINCIPAL TWILIO ====================
-        async function enviarPedidoTwilio() {
-            // Validar
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar evento para mostrar/ocultar mapa según ciudad
+            customerCity.addEventListener('change', function() {
+                if (this.value === 'Coronel Oviedo') {
+                    coronelOviedoMap.style.display = 'block';
+                    otherCityReference.classList.add('hidden');
+                    if (!map) {
+                        initMap();
+                    }
+                } else if (this.value) {
+                    coronelOviedoMap.style.display = 'none';
+                    otherCityReference.classList.remove('hidden');
+                } else {
+                    coronelOviedoMap.style.display = 'none';
+                    otherCityReference.classList.add('hidden');
+                }
+            });
+            
+            // Inicializar botones de cantidad
+            document.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const product = e.target.closest('.quantity-btn').dataset.product;
+                    const action = e.target.closest('.quantity-btn').dataset.action;
+                    
+                    if (action === 'increase') {
+                        products[product].quantity++;
+                    } else if (action === 'decrease' && products[product].quantity > 0) {
+                        products[product].quantity--;
+                    }
+                    
+                    document.getElementById(`${product}-quantity`).textContent = products[product].quantity;
+                });
+            });
+        });
+
+        // ==================== FUNCIÓN PRINCIPAL ====================
+        async function enviarPedidoSistema() {
             if (!validateStep3()) {
                 return false;
             }
@@ -474,28 +623,62 @@
                 nombre: document.getElementById('customerName').value,
                 telefono: document.getElementById('customerPhone').value,
                 ciudad: document.getElementById('customerCity').value,
-                direccion: document.getElementById('locationReference').value,
-                productos: obtenerProductosSeleccionados(),
-                total: calcularTotal(),
-                fecha: new Date().toLocaleString('es-PY'),
-                id: 'PED' + Date.now()
+                referencia: '',
+                productos: [],
+                total: 0,
+                fecha: new Date().toLocaleString('es-PY')
             };
+
+            // Obtener referencia según la ciudad
+            if (pedidoData.ciudad === 'Coronel Oviedo') {
+                pedidoData.referencia = document.getElementById('locationReference')?.value || '';
+            } else {
+                pedidoData.referencia = document.getElementById('locationReferenceOther')?.value || '';
+            }
+
+            // Obtener productos seleccionados
+            let tieneProductos = false;
+            for (const product in products) {
+                if (products[product].quantity > 0) {
+                    tieneProductos = true;
+                    const subtotal = products[product].quantity * products[product].price;
+                    pedidoData.total += subtotal;
+                    pedidoData.productos.push({
+                        nombre: products[product].name,
+                        cantidad: products[product].quantity,
+                        precio: products[product].price
+                    });
+                }
+            }
+            
+            if (!tieneProductos) {
+                alert('❌ Por favor selecciona al menos un producto');
+                return false;
+            }
+
+            // Si es Coronel Oviedo, añadir datos del mapa
+            if (pedidoData.ciudad === 'Coronel Oviedo' && map) {
+                pedidoData.ubicacion = selectedAddress;
+                pedidoData.mapa = googleMapsLink;
+                pedidoData.coordenadas = `${selectedLat}, ${selectedLng}`;
+            }
 
             // Mostrar loading
             mostrarLoading();
             
             try {
-                const resultado = await enviarMensajeTwilio(pedidoData);
+                const success = await guardarPedidoGoogleSheets(pedidoData);
                 
-                if (resultado.success) {
+                if (success) {
                     mostrarExito();
-                    return true;
                 } else {
-                    throw new Error(resultado.error);
+                    mostrarError();
                 }
                 
+                return success;
+                
             } catch (error) {
-                console.error('Error Twilio:', error);
+                console.error('Error:', error);
                 mostrarError();
                 return false;
             } finally {
@@ -503,95 +686,57 @@
             }
         }
 
-        async function enviarMensajeTwilio(pedidoData) {
-            const mensaje = construirMensajePedido(pedidoData);
-            
-            // Codificar datos para la petición
-            const formData = new URLSearchParams();
-            formData.append('To', TU_NUMERO_WHATSAPP);
-            formData.append('From', TWILIO_NUMERO);
-            formData.append('Body', mensaje);
-            
-            const response = await fetch(TWILIO_URL, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + btoa(TWILIO_ACCOUNT_SID + ':' + TWILIO_AUTH_TOKEN),
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: formData
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                return { success: true, sid: data.sid };
-            } else {
-                const errorText = await response.text();
-                return { success: false, error: errorText };
+        // ==================== GOOGLE SHEETS ====================
+        async function guardarPedidoGoogleSheets(pedidoData) {
+            const sheetData = {
+                id: 'PED' + Date.now(),
+                cliente: pedidoData.nombre,
+                telefono: pedidoData.telefono,
+                direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
+                productos: JSON.stringify(pedidoData.productos),
+                total: pedidoData.total,
+                fecha: new Date().toISOString(),
+                estado: 'pendiente',
+                repartidor: ''
+            };
+
+            // Si hay datos de ubicación, agregarlos
+            if (pedidoData.ubicacion) {
+                sheetData.direccion += ' | ' + pedidoData.ubicacion;
+            }
+            if (pedidoData.mapa) {
+                sheetData.direccion += ' | Mapa: ' + pedidoData.mapa;
+            }
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetData)
+                });
+                
+                const result = await response.json();
+                return result.status === 'success';
+                
+            } catch (error) {
+                console.error('Error Google Sheets:', error);
+                return false;
             }
         }
 
-        function construirMensajePedido(pedido) {
-            let productosTexto = '';
-            pedido.productos.forEach(prod => {
-                const subtotal = prod.cantidad * prod.precio;
-                productosTexto += `✅ ${prod.nombre} x${prod.cantidad} = Gs. ${subtotal.toLocaleString()}\n`;
-            });
-            
-            return `🐐 *NUEVO PEDIDO AUTOMÁTICO - GRANJA ABUELO FELIPE* 🐐
-
-👤 *Cliente:* ${pedido.nombre}
-📞 *Contacto:* ${pedido.telefono}
-🏙️ *Ciudad:* ${pedido.ciudad}
-📍 *Dirección:* ${pedido.direccion}
-
-🛒 *PEDIDO:*
-${productosTexto}
-💰 *TOTAL: Gs. ${pedido.total.toLocaleString()}*
-
-⏰ *Fecha:* ${pedido.fecha}
-🆔 *ID Pedido:* ${pedido.id}
-
-📊 *Estado:* 📋 Pendiente de confirmación
-🌐 *Origen:* Pedido Web Automático
-
-_¡Pedido recibido automáticamente! Por favor contactar al cliente para confirmar disponibilidad y coordinar entrega._`;
-        }
-
-        // ==================== FUNCIONES AUXILIARES ====================
-        function obtenerProductosSeleccionados() {
-            const productos = [];
-            for (const key in products) {
-                if (products[key].quantity > 0) {
-                    productos.push({
-                        nombre: products[key].name,
-                        cantidad: products[key].quantity,
-                        precio: products[key].price
-                    });
-                }
-            }
-            return productos;
-        }
-
-        function calcularTotal() {
-            let total = 0;
-            for (const key in products) {
-                if (products[key].quantity > 0) {
-                    total += products[key].quantity * products[key].price;
-                }
-            }
-            return total;
-        }
-
+        // ==================== FUNCIONES DE INTERFAZ ====================
         function mostrarLoading() {
             loadingOverlay.style.display = 'flex';
             sendOrder.disabled = true;
-            sendOrder.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
+            sendOrder.innerHTML = '⏳ Enviando pedido...';
         }
 
         function ocultarLoading() {
             loadingOverlay.style.display = 'none';
             sendOrder.disabled = false;
-            sendOrder.innerHTML = '<i class="fas fa-robot mr-2"></i> Confirmar y Enviar Automáticamente';
+            sendOrder.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Confirmar y Enviar Pedido';
         }
 
         function mostrarExito() {
@@ -613,7 +758,77 @@ _¡Pedido recibido automáticamente! Por favor contactar al cliente para confirm
             successMessage.classList.add('hidden');
         }
 
-        // ==================== SISTEMA DE NAVEGACIÓN ====================
+        // ==================== MAPA ====================
+        function initMap() {
+            const oviedoCenter = [selectedLat, selectedLng];
+            
+            map = L.map('interactive-map').setView(oviedoCenter, 14);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Crear marcador inicial
+            marker = L.marker(oviedoCenter, {
+                draggable: true,
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    iconSize: [20, 20]
+                })
+            }).addTo(map);
+            
+            // Evento para actualizar ubicación al arrastrar
+            marker.on('dragend', function(e) {
+                const position = marker.getLatLng();
+                selectedLat = position.lat.toFixed(6);
+                selectedLng = position.lng.toFixed(6);
+                googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
+                
+                updateLocationDisplay();
+                reverseGeocode(position.lat, position.lng);
+            });
+            
+            // Evento para actualizar ubicación al hacer clic
+            map.on('click', function(e) {
+                const position = e.latlng;
+                selectedLat = position.lat.toFixed(6);
+                selectedLng = position.lng.toFixed(6);
+                googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
+                
+                marker.setLatLng(position);
+                updateLocationDisplay();
+                reverseGeocode(position.lat, position.lng);
+            });
+            
+            updateLocationDisplay();
+        }
+
+        function updateLocationDisplay() {
+            document.getElementById('selected-lat').textContent = selectedLat;
+            document.getElementById('selected-lng').textContent = selectedLng;
+            document.getElementById('location-link').textContent = googleMapsLink;
+            document.getElementById('location-link').href = googleMapsLink;
+        }
+
+        function reverseGeocode(lat, lng) {
+            // Simulación de geocodificación inversa
+            // En producción, usarías un servicio como Nominatim
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.display_name) {
+                        selectedAddress = data.display_name;
+                        document.getElementById('selected-address').textContent = selectedAddress;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en geocodificación:', error);
+                    selectedAddress = `Lat: ${selectedLat}, Lng: ${selectedLng}`;
+                    document.getElementById('selected-address').textContent = selectedAddress;
+                });
+        }
+
+        // ==================== SISTEMA DE PASOS ====================
         function changeStep(step) {
             steps.forEach(s => s.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
@@ -628,9 +843,8 @@ _¡Pedido recibido automáticamente! Por favor contactar al cliente para confirm
             const name = document.getElementById('customerName').value;
             const phone = document.getElementById('customerPhone').value;
             const city = document.getElementById('customerCity').value;
-            const address = document.getElementById('locationReference').value;
             
-            if (!name || !phone || !city || !address) {
+            if (!name || !phone || !city) {
                 alert('❌ Por favor, complete todos los campos obligatorios.');
                 return false;
             }
@@ -642,6 +856,15 @@ _¡Pedido recibido automáticamente! Por favor contactar al cliente para confirm
             if (!phoneRegex.test(cleanPhone)) {
                 alert('❌ Por favor ingresa un número de WhatsApp válido de Paraguay (ej: 0981123456)');
                 return false;
+            }
+            
+            // Validar referencia para otras ciudades
+            if (city !== 'Coronel Oviedo') {
+                const referencia = document.getElementById('locationReferenceOther').value;
+                if (!referencia) {
+                    alert('❌ Por favor, ingrese una dirección o referencia para la entrega.');
+                    return false;
+                }
             }
             
             return true;
@@ -666,6 +889,52 @@ _¡Pedido recibido automáticamente! Por favor contactar al cliente para confirm
 
         function validateStep3() {
             return validateStep1() && validateStep2();
+        }
+
+        // ==================== RESUMEN DEL PEDIDO ====================
+        function updateOrderSummary() {
+            document.getElementById('summary-name').textContent = document.getElementById('customerName').value;
+            document.getElementById('summary-phone').textContent = document.getElementById('customerPhone').value;
+            document.getElementById('summary-city').textContent = document.getElementById('customerCity').value;
+            
+            // Actualizar ubicación en el resumen
+            const city = document.getElementById('customerCity').value;
+            let locationText = '';
+            let locationLink = '';
+            
+            if (city === 'Coronel Oviedo') {
+                locationText = selectedAddress;
+                locationLink = googleMapsLink;
+                document.getElementById('summary-location-link-container').classList.remove('hidden');
+                document.getElementById('summary-location-link').href = locationLink;
+                document.getElementById('summary-location-link').textContent = locationLink;
+            } else {
+                locationText = document.getElementById('locationReferenceOther').value;
+                document.getElementById('summary-location-link-container').classList.add('hidden');
+            }
+            
+            document.getElementById('summary-location').textContent = locationText;
+            
+            const productsSummary = document.getElementById('summary-products');
+            productsSummary.innerHTML = '';
+            
+            let total = 0;
+            for (const product in products) {
+                if (products[product].quantity > 0) {
+                    const productTotal = products[product].quantity * products[product].price;
+                    total += productTotal;
+                    
+                    const productElement = document.createElement('div');
+                    productElement.className = 'flex justify-between items-center py-2 border-b border-blue-100';
+                    productElement.innerHTML = `
+                        <span class="text-gray-700">${products[product].name} x${products[product].quantity}</span>
+                        <span class="font-bold text-gray-800">Gs. ${productTotal.toLocaleString()}</span>
+                    `;
+                    productsSummary.appendChild(productElement);
+                }
+            }
+            
+            document.getElementById('summary-total').textContent = `Gs. ${total.toLocaleString()}`;
         }
 
         // ==================== EVENT LISTENERS ====================
@@ -694,60 +963,10 @@ _¡Pedido recibido automáticamente! Por favor contactar al cliente para confirm
             updateProgressBar(66);
         });
 
-        // Botones de cantidad
-        document.querySelectorAll('.quantity-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const product = e.target.closest('.quantity-btn').dataset.product;
-                const action = e.target.closest('.quantity-btn').dataset.action;
-                
-                if (action === 'increase') {
-                    products[product].quantity++;
-                } else if (action === 'decrease' && products[product].quantity > 0) {
-                    products[product].quantity--;
-                }
-                
-                document.getElementById(`${product}-quantity`).textContent = products[product].quantity;
-            });
-        });
-
         // Botón de enviar pedido
         sendOrder.addEventListener('click', async (e) => {
             e.preventDefault();
-            await enviarPedidoTwilio();
-        });
-
-        // RESUMEN DEL PEDIDO
-        function updateOrderSummary() {
-            document.getElementById('summary-name').textContent = document.getElementById('customerName').value;
-            document.getElementById('summary-phone').textContent = document.getElementById('customerPhone').value;
-            document.getElementById('summary-city').textContent = document.getElementById('customerCity').value;
-            document.getElementById('summary-address').textContent = document.getElementById('locationReference').value;
-            
-            const productsSummary = document.getElementById('summary-products');
-            productsSummary.innerHTML = '';
-            
-            let total = 0;
-            for (const product in products) {
-                if (products[product].quantity > 0) {
-                    const productTotal = products[product].quantity * products[product].price;
-                    total += productTotal;
-                    
-                    const productElement = document.createElement('div');
-                    productElement.className = 'flex justify-between items-center py-2 border-b border-blue-100';
-                    productElement.innerHTML = `
-                        <span class="text-gray-700">${products[product].name} x${products[product].quantity}</span>
-                        <span class="font-bold text-gray-800">Gs. ${productTotal.toLocaleString()}</span>
-                    `;
-                    productsSummary.appendChild(productElement);
-                }
-            }
-            
-            document.getElementById('summary-total').textContent = `Gs. ${total.toLocaleString()}`;
-        }
-
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Sistema de pedidos Twilio cargado correctamente');
+            await enviarPedidoSistema();
         });
     </script>
 </body>
