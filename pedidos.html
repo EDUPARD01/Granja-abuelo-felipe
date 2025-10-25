@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realizar Pedido - GRANJA ABUELO FELIPE</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -540,8 +545,19 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-        // CONFIGURACIÓN GOOGLE APPS SCRIPT
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyeZ69FkwyfxTLftvjbBEX1CrhC2UWsGLL6yKIRLaOqe_nX5ZiuSS8Af-cD9EaQQh0_/exec';
+        // CONFIGURACIÓN FIREBASE - TUS DATOS REALES
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi-UfoiEzwiMRv_9nH9ex_NWm7xVgtbEo",
+            authDomain: "granja-abuelo-felipe.firebaseapp.com",
+            projectId: "granja-abuelo-felipe",
+            storageBucket: "granja-abuelo-felipe.firebasestorage.app",
+            messagingSenderId: "164634430679",
+            appId: "1:164634430679:web:31bef3f832a6ccda26f492"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         // Variables globales
         let currentStep = 1;
@@ -613,6 +629,32 @@
             });
         });
 
+        // ==================== GUARDAR EN FIREBASE ====================
+        async function guardarPedidoFirebase(pedidoData) {
+            try {
+                const pedidoId = 'PED' + Date.now();
+                
+                await db.collection('pedidos').doc(pedidoId).set({
+                    id: pedidoId,
+                    cliente: pedidoData.nombre,
+                    telefono: pedidoData.telefono,
+                    direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
+                    productos: pedidoData.productos,
+                    total: pedidoData.total,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp(),
+                    estado: 'pendiente',
+                    repartidor: ''
+                });
+                
+                console.log('✅ Pedido guardado en Firebase:', pedidoId);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error Firebase:', error);
+                return false;
+            }
+        }
+
         // ==================== FUNCIÓN PRINCIPAL ====================
         async function enviarPedidoSistema() {
             if (!validateStep3()) {
@@ -656,18 +698,13 @@
                 return false;
             }
 
-            // Si es Coronel Oviedo, añadir datos del mapa
-            if (pedidoData.ciudad === 'Coronel Oviedo' && map) {
-                pedidoData.ubicacion = selectedAddress;
-                pedidoData.mapa = googleMapsLink;
-                pedidoData.coordenadas = `${selectedLat}, ${selectedLng}`;
-            }
-
             // Mostrar loading
             mostrarLoading();
             
             try {
-                const success = await guardarPedidoGoogleSheets(pedidoData);
+                console.log('Enviando pedido a Firebase...');
+                
+                const success = await guardarPedidoFirebase(pedidoData);
                 
                 if (success) {
                     mostrarExito();
@@ -678,51 +715,11 @@
                 return success;
                 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error general:', error);
                 mostrarError();
                 return false;
             } finally {
                 ocultarLoading();
-            }
-        }
-
-        // ==================== GOOGLE SHEETS ====================
-        async function guardarPedidoGoogleSheets(pedidoData) {
-            const sheetData = {
-                id: 'PED' + Date.now(),
-                cliente: pedidoData.nombre,
-                telefono: pedidoData.telefono,
-                direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
-                productos: JSON.stringify(pedidoData.productos),
-                total: pedidoData.total,
-                fecha: new Date().toISOString(),
-                estado: 'pendiente',
-                repartidor: ''
-            };
-
-            // Si hay datos de ubicación, agregarlos
-            if (pedidoData.ubicacion) {
-                sheetData.direccion += ' | ' + pedidoData.ubicacion;
-            }
-            if (pedidoData.mapa) {
-                sheetData.direccion += ' | Mapa: ' + pedidoData.mapa;
-            }
-
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(sheetData)
-                });
-                
-                const result = await response.json();
-                return result.status === 'success';
-                
-            } catch (error) {
-                console.error('Error Google Sheets:', error);
-                return false;
             }
         }
 
