@@ -211,6 +211,27 @@ function mostrarDetallePedido(pedidoId) {
     const fecha = pedido.fecha ? 
         (pedido.fecha.toDate ? pedido.fecha.toDate().toLocaleString('es-PY') : new Date(pedido.fecha).toLocaleString('es-PY')) : 
         'Fecha no disponible';
+
+    // Generar enlace de Maps mejorado
+    let mapsLink = '#';
+    let mapsText = 'Abrir en Maps';
+    let tieneCoordenadasExactas = false;
+    
+    if (pedido.coordenadas) {
+        // Usar coordenadas exactas si están disponibles
+        mapsLink = `https://www.google.com/maps/?q=${pedido.coordenadas.lat},${pedido.coordenadas.lng}&z=17`;
+        mapsText = '📍 Abrir Ubicación Exacta en Maps';
+        tieneCoordenadasExactas = true;
+    } else if (pedido.mapa && pedido.mapa.includes('google.com/maps')) {
+        // Usar enlace de mapa si está disponible
+        mapsLink = pedido.mapa;
+        mapsText = '🗺️ Abrir en Maps';
+    } else {
+        // Buscar por dirección textual
+        const direccionCodificada = encodeURIComponent((pedido.direccion || '') + ', Coronel Oviedo, Paraguay');
+        mapsLink = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
+        mapsText = '🔍 Buscar en Maps';
+    }
     
     pedidoDetailContent.innerHTML = `
         <div class="space-y-4">
@@ -223,9 +244,15 @@ function mostrarDetallePedido(pedidoId) {
             <div>
                 <h4 class="font-bold text-gray-700 mb-2">📍 Dirección</h4>
                 <p class="text-gray-800">${pedido.direccion || 'No especificado'}</p>
-                <button onclick="abrirMapa('${pedido.direccion || ''}')" class="text-blue-600 text-sm mt-1">
-                    <i class="fas fa-map-marker-alt mr-1"></i>Abrir en Maps
+                <button onclick="abrirMapaExacto('${pedidoId}')" class="mt-2 w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-map-marker-alt mr-2"></i>${mapsText}
                 </button>
+                ${pedido.coordenadas ? `
+                    <p class="text-xs text-gray-500 mt-1">
+                        <i class="fas fa-crosshairs mr-1"></i>
+                        Coordenadas exactas: ${pedido.coordenadas.lat}, ${pedido.coordenadas.lng}
+                    </p>
+                ` : ''}
             </div>
             
             <div>
@@ -246,11 +273,53 @@ function mostrarDetallePedido(pedidoId) {
         </div>
     `;
     
+    // Guardar el enlace de Maps para usar en la función
+    estadoApp.pedidoSeleccionado.mapsLink = mapsLink;
+    
     // Mostrar botones
     acceptPedido.classList.remove('hidden');
     completePedido.classList.add('hidden');
     
     pedidoModal.classList.remove('hidden');
+}
+
+// ==================== FUNCIÓN MEJORADA PARA ABRIR MAPS ====================
+function abrirMapaExacto(pedidoId) {
+    const pedido = estadoApp.pedidos.find(p => p.id === pedidoId);
+    if (!pedido) {
+        alert('Pedido no encontrado');
+        return;
+    }
+    
+    let mapsUrl;
+    
+    if (pedido.coordenadas) {
+        // ✅ COORDENADAS EXACTAS - Esto abrirá el punto exacto
+        mapsUrl = `https://www.google.com/maps/?q=${pedido.coordenadas.lat},${pedido.coordenadas.lng}&z=17`;
+        console.log('📍 Abriendo coordenadas exactas:', pedido.coordenadas);
+    } else if (pedido.mapa && pedido.mapa.includes('google.com/maps')) {
+        // ✅ ENLACE DE MAPA GUARDADO
+        mapsUrl = pedido.mapa;
+        console.log('🗺️ Abriendo enlace guardado:', pedido.mapa);
+    } else {
+        // 🔍 BÚSQUEDA POR DIRECCIÓN
+        const direccionCodificada = encodeURIComponent(pedido.direccion + ', Coronel Oviedo, Paraguay');
+        mapsUrl = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
+        console.log('🔍 Buscando por dirección:', pedido.direccion);
+    }
+    
+    window.open(mapsUrl, '_blank');
+}
+
+// Función de mapa antigua (mantener por compatibilidad)
+function abrirMapa(direccion) {
+    if (!direccion) {
+        alert('No hay dirección disponible');
+        return;
+    }
+    const direccionCodificada = encodeURIComponent(direccion + ', Paraguay');
+    const url = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
+    window.open(url, '_blank');
 }
 
 // ==================== EVENTOS ====================
@@ -298,17 +367,6 @@ completePedido.addEventListener('click', async function() {
 closeModal.addEventListener('click', function() {
     pedidoModal.classList.add('hidden');
 });
-
-// ==================== UTILIDADES ====================
-function abrirMapa(direccion) {
-    if (!direccion) {
-        alert('No hay dirección disponible');
-        return;
-    }
-    const direccionCodificada = encodeURIComponent(direccion + ', Paraguay');
-    const url = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
-    window.open(url, '_blank');
-}
 
 // ==================== INICIALIZACIÓN ====================
 console.log('🚀 App de repartidores cargada');
