@@ -755,76 +755,93 @@
             successMessage.classList.add('hidden');
         }
 
-        // ==================== MAPA ====================
-        function initMap() {
-            const oviedoCenter = [selectedLat, selectedLng];
+        // ==================== MAPA MEJORADO ====================
+function initMap() {
+    const oviedoCenter = [selectedLat, selectedLng];
+    
+    map = L.map('interactive-map').setView(oviedoCenter, 14);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Crear marcador inicial
+    marker = L.marker(oviedoCenter, {
+        draggable: true,
+        icon: L.divIcon({
+            className: 'custom-marker',
+            iconSize: [20, 20]
+        })
+    }).addTo(map);
+    
+    // Zonas predefinidas de Coronel Oviedo
+    const zonasCoronelOviedo = [
+        { coords: [-25.4481, -56.4428], nombre: 'Centro de Coronel Oviedo' },
+        { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
+        { coords: [-25.4550, -56.4350], nombre: 'Barrio Santa Teresa' },
+        { coords: [-25.4380, -56.4500], nombre: 'Barrio San Antonio' },
+        { coords: [-25.4600, -56.4300], nombre: 'Barrio San Roque' },
+        { coords: [-25.4350, -56.4250], nombre: 'Barrio San Blas' },
+        { coords: [-25.4300, -56.4550], nombre: 'Barrio San Pablo' },
+        { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' }
+    ];
+    
+    // Función para encontrar zona más cercana
+    function encontrarZonaCercana(lat, lng) {
+        let zonaMasCercana = 'Ubicación en Coronel Oviedo';
+        let distanciaMinima = Infinity;
+        
+        for (const zona of zonasCoronelOviedo) {
+            const distancia = Math.sqrt(
+                Math.pow(lat - zona.coords[0], 2) + 
+                Math.pow(lng - zona.coords[1], 2)
+            );
             
-            map = L.map('interactive-map').setView(oviedoCenter, 14);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-            
-            // Crear marcador inicial
-            marker = L.marker(oviedoCenter, {
-                draggable: true,
-                icon: L.divIcon({
-                    className: 'custom-marker',
-                    iconSize: [20, 20]
-                })
-            }).addTo(map);
-            
-            // Evento para actualizar ubicación al arrastrar
-            marker.on('dragend', function(e) {
-                const position = marker.getLatLng();
-                selectedLat = position.lat.toFixed(6);
-                selectedLng = position.lng.toFixed(6);
-                googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
-                
-                updateLocationDisplay();
-                reverseGeocode(position.lat, position.lng);
-            });
-            
-            // Evento para actualizar ubicación al hacer clic
-            map.on('click', function(e) {
-                const position = e.latlng;
-                selectedLat = position.lat.toFixed(6);
-                selectedLng = position.lng.toFixed(6);
-                googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
-                
-                marker.setLatLng(position);
-                updateLocationDisplay();
-                reverseGeocode(position.lat, position.lng);
-            });
-            
-            updateLocationDisplay();
+            if (distancia < distanciaMinima) {
+                distanciaMinima = distancia;
+                zonaMasCercana = zona.nombre;
+            }
         }
-
-        function updateLocationDisplay() {
-            document.getElementById('selected-lat').textContent = selectedLat;
-            document.getElementById('selected-lng').textContent = selectedLng;
-            document.getElementById('location-link').textContent = googleMapsLink;
-            document.getElementById('location-link').href = googleMapsLink;
-        }
-
-        function reverseGeocode(lat, lng) {
-            // Simulación de geocodificación inversa
-            // En producción, usarías un servicio como Nominatim
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.display_name) {
-                        selectedAddress = data.display_name;
-                        document.getElementById('selected-address').textContent = selectedAddress;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en geocodificación:', error);
-                    selectedAddress = `Lat: ${selectedLat}, Lng: ${selectedLng}`;
-                    document.getElementById('selected-address').textContent = selectedAddress;
-                });
-        }
-
+        
+        return zonaMasCercana;
+    }
+    
+    // Función para actualizar ubicación
+    function actualizarUbicacion(lat, lng) {
+        selectedLat = lat.toFixed(6);
+        selectedLng = lng.toFixed(6);
+        googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
+        
+        // Encontrar zona
+        const zona = encontrarZonaCercana(lat, lng);
+        selectedAddress = `${zona} (Coordenadas: ${selectedLat}, ${selectedLng})`;
+        
+        updateLocationDisplay();
+    }
+    
+    // Evento para actualizar ubicación al arrastrar
+    marker.on('dragend', function(e) {
+        const position = marker.getLatLng();
+        actualizarUbicacion(position.lat, position.lng);
+    });
+    
+    // Evento para actualizar ubicación al hacer clic
+    map.on('click', function(e) {
+        const position = e.latlng;
+        actualizarUbicacion(position.lat, position.lng);
+        marker.setLatLng(position);
+    });
+    
+    // Agregar marcadores de zonas principales
+    zonasCoronelOviedo.forEach(zona => {
+        L.marker(zona.coords)
+            .addTo(map)
+            .bindPopup(`📍 ${zona.nombre}`)
+            .openPopup();
+    });
+    
+    updateLocationDisplay();
+}
         // ==================== SISTEMA DE PASOS ====================
         function changeStep(step) {
             steps.forEach(s => s.classList.remove('active'));
