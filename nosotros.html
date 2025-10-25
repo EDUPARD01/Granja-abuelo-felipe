@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realizar Pedido - GRANJA ABUELO FELIPE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .font-display { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
+        .btn-primary {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+    </style>
+</head>
+<body class="font-body bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">🐐</span>
+                    </div>
+                    <div>
+                        <h1 class="font-display text-2xl font-bold text-gray-800">GRANJA ABUELO FELIPE</h1>
+                        <p class="text-sm text-gray-600">Leche de Cabra Artesanal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Formulario SIMPLE que SÍ funciona -->
+    <main class="container mx-auto px-6 py-12 max-w-2xl">
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="font-display text-3xl font-bold text-gray-800 mb-2">Realizar Pedido</h2>
+            <p class="text-gray-600 mb-6">Complete el formulario y recibirá un WhatsApp pronto</p>
+            
+            <!-- FORMULARIO FORMSPREE QUE SÍ FUNCIONA -->
+            <form action="https://formspree.io/f/xdkpnpld" method="POST" class="space-y-6">
+                <!-- Información Personal -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                    <input type="text" name="nombre" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono WhatsApp *</label>
+                    <input type="tel" name="telefono" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad *</label>
+                    <select name="ciudad" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" required>
+                        <option value="">Seleccione una ciudad</option>
+                        <option value="Asunción">Asunción</option>
+                        <option value="Coronel Oviedo">Coronel Oviedo</option>
+                        <option value="Ciudad del Este">Ciudad del Este</option>
+                        <option value="Encarnación">Encarnación</option>
+                    </select>
+                </div>
+                
+                <!-- Productos -->
+                <div class="border-t pt-6">
+                    <h3 class="font-display text-xl font-bold text-gray-800 mb-4">Productos</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h4 class="font-medium">Leche de Cabra Fresca</h4>
+                                <p class="text-sm text-gray-600">Gs. 25.000 (1 litro)</p>
+                            </div>
+                            <input type="number" name="leche_cantidad" min="0" value="0" class="w-20 p-2 border border-gray-300 rounded">
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h4 class="font-medium">Queso de Cabra</h4>
+                                <p class="text-sm text-gray-600">Gs. 180.000 (1kg)</p>
+                            </div>
+                            <input type="number" name="queso_cantidad" min="0" value="0" class="w-20 p-2 border border-gray-300 rounded">
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div>
+                                <h4 class="font-medium">Yogur de Cabra Natural</h4>
+                                <p class="text-sm text-gray-600">Gs. 25.000 (1 litro)</p>
+                            </div>
+                            <input type="number" name="yogur_cantidad" min="0" value="0" class="w-20 p-2 border border-gray-300 rounded">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mensaje adicional -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección/Referencia</label>
+                    <textarea name="referencia" rows="3" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Ej: Barrio San Miguel, casa color azul..."></textarea>
+                </div>
+                
+                <!-- Botón enviar -->
+                <button type="submit" class="btn-primary w-full py-4 text-lg">
+                    <i class="fas fa-paper-plane mr-2"></i> Enviar Pedido por WhatsApp
+                </button>
+                
+                <p class="text-sm text-gray-600 text-center">
+                    Al enviar, recibirá un WhatsApp de confirmación en minutos
+                </p>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Mensaje de éxito
+        document.querySelector('form').addEventListener('submit', function(e) {
+            setTimeout(() => {
+                alert('✅ Pedido enviado! Recibirá un WhatsApp pronto.');
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
