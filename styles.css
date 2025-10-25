@@ -261,3 +261,41 @@ body {
   transform: scale(1.2) translateZ(400px);
   box-shadow: 0 0 20px #38bdf8;
 }
+.search-control {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.search-control input {
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 8px;
+    width: 200px;
+}
+
+.search-control button {
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-control button:hover {
+    background: #059669;
+}
+
+/* Animación para notificaciones */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
+}
+
+.animate-bounce {
+    animation: bounce 2s infinite;
+}
