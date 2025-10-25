@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repartidores - Granja Abuelo Felipe</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-motorcycle text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Repartidores</h1>
+                <p class="text-gray-600">Granja Abuelo Felipe</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="username" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Tu usuario" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="Tu contraseña" required>
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">¿Problemas para ingresar?</p>
+                <p class="text-sm font-medium">Contactar al: 0976 463756</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (hidden initially) -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="flex items-center justify-between p-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-motorcycle text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-gray-800" id="repartidorName">Repartidor</h1>
+                        <p class="text-xs text-gray-600" id="repartidorStatus">🟢 En línea</p>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="text-gray-600 hover:text-red-600">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <main class="p-4">
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white rounded-xl p-4 shadow-sm border">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-blue-600" id="pedidosPendientes">0</div>
+                        <div class="text-sm text-gray-600">Pendientes</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm border">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-green-600" id="pedidosHoy">0</div>
+                        <div class="text-sm text-gray-600">Hoy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pedidos Pendientes -->
+            <div class="mb-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-3">📦 Pedidos Pendientes</h2>
+                <div id="pedidosList" class="space-y-3">
+                    <!-- Los pedidos se cargan aquí -->
+                </div>
+            </div>
+
+            <!-- Botón Actualizar -->
+            <button id="refreshBtn" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                <i class="fas fa-sync-alt mr-2"></i>Actualizar Pedidos
+            </button>
+        </main>
+    </div>
+
+    <!-- Pedido Detail Modal -->
+    <div id="pedidoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="p-4 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold">Detalle del Pedido</h3>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-4" id="pedidoDetailContent">
+                <!-- Contenido del pedido -->
+            </div>
+            <div class="p-4 border-t">
+                <button id="acceptPedido" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors mb-2">
+                    <i class="fas fa-check mr-2"></i>Aceptar Pedido
+                </button>
+                <button id="completePedido" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors hidden">
+                    <i class="fas fa-flag-checkered mr-2"></i>Marcar como Entregado
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
