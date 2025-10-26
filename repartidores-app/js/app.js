@@ -22,7 +22,8 @@ const CONFIG = {
 let estadoApp = {
     repartidor: null,
     pedidos: [],
-    pedidoSeleccionado: null
+    pedidoSeleccionado: null,
+    filtroActual: 'todos'
 };
 
 // Elementos DOM
@@ -51,11 +52,13 @@ function inicializarFirebase() {
         
         // Escuchar cambios en pedidos pendientes
         db.collection('pedidos')
-            .where('estado', '==', 'pendiente')
+            .where('estado', 'in', ['pendiente', 'aceptado'])
             .onSnapshot((snapshot) => {
                 const pedidos = [];
                 snapshot.forEach(doc => {
-                    pedidos.push(doc.data());
+                    const pedidoData = doc.data();
+                    pedidoData.firebaseId = doc.id; // Guardar ID de Firebase
+                    pedidos.push(pedidoData);
                 });
                 estadoApp.pedidos = pedidos;
                 actualizarUI();
@@ -107,7 +110,8 @@ async function actualizarEstadoPedido(pedidoId, nuevoEstado) {
         const db = firebase.firestore();
         await db.collection('pedidos').doc(pedidoId).update({
             estado: nuevoEstado,
-            repartidor: estadoApp.repartidor
+            repartidor: estadoApp.repartidor,
+            fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
         });
         
         console.log('✅ Pedido actualizado:', pedidoId, nuevoEstado);
@@ -118,34 +122,66 @@ async function actualizarEstadoPedido(pedidoId, nuevoEstado) {
     }
 }
 
+// ==================== FILTRAR PEDIDOS ====================
+function filtrarPedidos() {
+    const pedidosFiltrados = estadoApp.pedidos.filter(pedido => {
+        switch(estadoApp.filtroActual) {
+            case 'coronel-oviedo':
+                return pedido.ciudad === 'Coronel Oviedo';
+            case 'otras-ciudades':
+                return pedido.ciudad !== 'Coronel Oviedo';
+            default:
+                return true;
+        }
+    });
+    return pedidosFiltrados;
+}
+
 // ==================== INTERFAZ ====================
 function actualizarUI() {
-    const pedidosPendientes = estadoApp.pedidos.length;
-    const pedidosHoy = estadoApp.pedidos.length;
+    const pedidosFiltrados = filtrarPedidos();
+    const pedidosPendientes = pedidosFiltrados.filter(p => p.estado === 'pendiente').length;
+    const pedidosAceptados = pedidosFiltrados.filter(p => p.estado === 'aceptado' && p.repartidor === estadoApp.repartidor).length;
     
     document.getElementById('pedidosPendientes').textContent = pedidosPendientes;
-    document.getElementById('pedidosHoy').textContent = pedidosHoy;
+    document.getElementById('pedidosHoy').textContent = pedidosFiltrados.length;
     
     renderizarPedidos();
 }
 
 function renderizarPedidos() {
+    const pedidosFiltrados = filtrarPedidos();
+    
     pedidosList.innerHTML = '';
     
-    if (estadoApp.pedidos.length === 0) {
+    if (pedidosFiltrados.length === 0) {
         pedidosList.innerHTML = `
             <div class="bg-white rounded-xl p-6 text-center">
                 <div class="text-gray-400 text-4xl mb-2">📦</div>
-                <p class="text-gray-600">No hay pedidos pendientes</p>
+                <p class="text-gray-600">No hay pedidos ${estadoApp.filtroActual !== 'todos' ? 'en esta categoría' : 'pendientes'}</p>
                 <p class="text-sm text-gray-500 mt-1">Los pedidos aparecerán aquí automáticamente</p>
             </div>
         `;
         return;
     }
     
-    estadoApp.pedidos.forEach(pedido => {
+    pedidosFiltrados.forEach(pedido => {
         const pedidoElement = document.createElement('div');
-        pedidoElement.className = `bg-white rounded-xl p-4 shadow-sm border-l-4 fade-in pedido-pendiente`;
+        const esAceptado = pedido.estado === 'aceptado';
+        const esMio = pedido.repartidor === estadoApp.repartidor;
+        
+        let claseEstado = 'pedido-pendiente';
+        let textoEstado = '🟡 PENDIENTE';
+        
+        if (esAceptado && esMio) {
+            claseEstado = 'pedido-aceptado';
+            textoEstado = '🟢 ACEPTADO POR TI';
+        } else if (esAceptado) {
+            claseEstado = 'pedido-aceptado-otro';
+            textoEstado = '🔵 ACEPTADO POR OTRO';
+        }
+        
+        pedidoElement.className = `bg-white rounded-xl p-4 shadow-sm border-l-4 fade-in ${claseEstado}`;
         
         let productosTexto = '';
         if (pedido.productos && Array.isArray(pedido.productos)) {
@@ -157,18 +193,27 @@ function renderizarPedidos() {
             productosTexto = 'Productos no disponibles';
         }
         
+        // Información de ubicación y envío
+        let infoUbicacion = '';
+        if (pedido.ciudad === 'Coronel Oviedo') {
+            infoUbicacion = `📍 ${pedido.ciudad} | 💵 ${pedido.metodoPago || 'Efectivo'}`;
+        } else {
+            infoUbicacion = `🚚 ${pedido.ciudad} | ${pedido.agenciaEnvio || 'Agencia por confirmar'}`;
+        }
+        
         pedidoElement.innerHTML = `
             <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
                     <h3 class="font-bold text-gray-800">${pedido.cliente || 'Sin nombre'}</h3>
                     <p class="text-sm text-gray-600">${pedido.direccion || 'Sin dirección'}</p>
+                    <p class="text-xs text-green-600 font-medium mt-1">${infoUbicacion}</p>
                     <p class="text-xs text-gray-500 mt-1">${productosTexto}</p>
                 </div>
                 <span class="text-lg font-bold text-green-600 ml-2">Gs. ${parseInt(pedido.total || 0).toLocaleString()}</span>
             </div>
             <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-500">${pedido.id || 'Sin ID'}</span>
-                <button class="ver-pedido-btn text-blue-600 hover:text-blue-800 text-sm font-medium" data-id="${pedido.id}">
+                <span class="text-xs px-2 py-1 rounded-full ${esAceptado && esMio ? 'bg-green-100 text-green-800' : esAceptado ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'}">${textoEstado}</span>
+                <button class="ver-pedido-btn text-blue-600 hover:text-blue-800 text-sm font-medium" data-id="${pedido.firebaseId}">
                     Ver Detalles
                 </button>
             </div>
@@ -187,7 +232,7 @@ function renderizarPedidos() {
 }
 
 function mostrarDetallePedido(pedidoId) {
-    const pedido = estadoApp.pedidos.find(p => p.id === pedidoId);
+    const pedido = estadoApp.pedidos.find(p => p.firebaseId === pedidoId);
     if (!pedido) {
         alert('Pedido no encontrado');
         return;
@@ -201,7 +246,10 @@ function mostrarDetallePedido(pedidoId) {
             const subtotal = (prod.precio || 0) * (prod.cantidad || 0);
             productosHTML += `
                 <div class="flex justify-between py-2 border-b border-gray-100">
-                    <span>${prod.nombre} x${prod.cantidad}</span>
+                    <div>
+                        <span class="font-medium">${prod.nombre}</span>
+                        <span class="text-sm text-gray-500 ml-2">x${prod.cantidad}</span>
+                    </div>
                     <span class="font-semibold">Gs. ${subtotal.toLocaleString()}</span>
                 </div>
             `;
@@ -212,6 +260,26 @@ function mostrarDetallePedido(pedidoId) {
         (pedido.fecha.toDate ? pedido.fecha.toDate().toLocaleString('es-PY') : new Date(pedido.fecha).toLocaleString('es-PY')) : 
         'Fecha no disponible';
 
+    // Información de ubicación y envío/pago
+    let infoEnvioPago = '';
+    if (pedido.ciudad === 'Coronel Oviedo') {
+        infoEnvioPago = `
+            <div class="bg-green-50 p-3 rounded-lg">
+                <h4 class="font-bold text-green-800 mb-1">📍 Entrega en Coronel Oviedo</h4>
+                <p class="text-green-700">Método de Pago: <span class="font-semibold">${pedido.metodoPago === 'transferencia' ? '🏦 Transferencia Bancaria' : '💵 Efectivo al recibir'}</span></p>
+            </div>
+        `;
+    } else {
+        infoEnvioPago = `
+            <div class="bg-blue-50 p-3 rounded-lg">
+                <h4 class="font-bold text-blue-800 mb-1">🚚 Envío a Otra Ciudad</h4>
+                <p class="text-blue-700">Agencia: <span class="font-semibold">${pedido.agenciaEnvio || 'Por confirmar'}</span></p>
+                ${pedido.departamento ? `<p class="text-blue-700">Departamento: <span class="font-semibold">${pedido.departamento}</span></p>` : ''}
+                ${pedido.distrito ? `<p class="text-blue-700">Distrito: <span class="font-semibold">${pedido.distrito}</span></p>` : ''}
+            </div>
+        `;
+    }
+    
     // Generar enlace de Maps mejorado
     let mapsLink = '#';
     let mapsText = 'Abrir en Maps';
@@ -228,13 +296,15 @@ function mostrarDetallePedido(pedidoId) {
         mapsText = '🗺️ Abrir en Maps';
     } else {
         // Buscar por dirección textual
-        const direccionCodificada = encodeURIComponent((pedido.direccion || '') + ', Coronel Oviedo, Paraguay');
+        const direccionCodificada = encodeURIComponent((pedido.direccion || '') + ', ' + (pedido.ciudad || '') + ', Paraguay');
         mapsLink = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
         mapsText = '🔍 Buscar en Maps';
     }
     
     pedidoDetailContent.innerHTML = `
         <div class="space-y-4">
+            ${infoEnvioPago}
+            
             <div>
                 <h4 class="font-bold text-gray-700 mb-2">👤 Cliente</h4>
                 <p class="text-gray-800">${pedido.cliente || 'No especificado'}</p>
@@ -242,15 +312,17 @@ function mostrarDetallePedido(pedidoId) {
             </div>
             
             <div>
-                <h4 class="font-bold text-gray-700 mb-2">📍 Dirección</h4>
+                <h4 class="font-bold text-gray-700 mb-2">📍 Dirección de Entrega</h4>
                 <p class="text-gray-800">${pedido.direccion || 'No especificado'}</p>
-                <button onclick="abrirMapaExacto('${pedidoId}')" class="mt-2 w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                <p class="text-sm text-gray-600 mt-1">${pedido.ciudad || ''} ${pedido.departamento ? `- ${pedido.departamento}` : ''}</p>
+                
+                <button onclick="abrirMapaExacto('${pedido.firebaseId}')" class="mt-2 w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                     <i class="fas fa-map-marker-alt mr-2"></i>${mapsText}
                 </button>
                 ${pedido.coordenadas ? `
                     <p class="text-xs text-gray-500 mt-1">
                         <i class="fas fa-crosshairs mr-1"></i>
-                        Coordenadas exactas: ${pedido.coordenadas.lat}, ${pedido.coordenadas.lng}
+                        Coordenadas exactas disponibles
                     </p>
                 ` : ''}
             </div>
@@ -265,10 +337,11 @@ function mostrarDetallePedido(pedidoId) {
             </div>
             
             <div>
-                <h4 class="font-bold text-gray-700 mb-2">📋 Información</h4>
+                <h4 class="font-bold text-gray-700 mb-2">📋 Información del Pedido</h4>
                 <p class="text-gray-600">ID: ${pedido.id || 'No disponible'}</p>
                 <p class="text-gray-600">Fecha: ${fecha}</p>
-                <p class="text-gray-600">Estado: <span class="font-semibold text-yellow-600">PENDIENTE</span></p>
+                <p class="text-gray-600">Estado: <span class="font-semibold ${pedido.estado === 'pendiente' ? 'text-yellow-600' : 'text-green-600'}">${pedido.estado?.toUpperCase() || 'PENDIENTE'}</span></p>
+                ${pedido.repartidor ? `<p class="text-gray-600">Repartidor: ${pedido.repartidor}</p>` : ''}
             </div>
         </div>
     `;
@@ -276,16 +349,24 @@ function mostrarDetallePedido(pedidoId) {
     // Guardar el enlace de Maps para usar en la función
     estadoApp.pedidoSeleccionado.mapsLink = mapsLink;
     
-    // Mostrar botones
-    acceptPedido.classList.remove('hidden');
-    completePedido.classList.add('hidden');
+    // Mostrar botones según el estado
+    if (pedido.estado === 'pendiente') {
+        acceptPedido.classList.remove('hidden');
+        completePedido.classList.add('hidden');
+    } else if (pedido.estado === 'aceptado' && pedido.repartidor === estadoApp.repartidor) {
+        acceptPedido.classList.add('hidden');
+        completePedido.classList.remove('hidden');
+    } else {
+        acceptPedido.classList.add('hidden');
+        completePedido.classList.add('hidden');
+    }
     
     pedidoModal.classList.remove('hidden');
 }
 
 // ==================== FUNCIÓN MEJORADA PARA ABRIR MAPS ====================
 function abrirMapaExacto(pedidoId) {
-    const pedido = estadoApp.pedidos.find(p => p.id === pedidoId);
+    const pedido = estadoApp.pedidos.find(p => p.firebaseId === pedidoId);
     if (!pedido) {
         alert('Pedido no encontrado');
         return;
@@ -303,7 +384,7 @@ function abrirMapaExacto(pedidoId) {
         console.log('🗺️ Abriendo enlace guardado:', pedido.mapa);
     } else {
         // 🔍 BÚSQUEDA POR DIRECCIÓN
-        const direccionCodificada = encodeURIComponent(pedido.direccion + ', Coronel Oviedo, Paraguay');
+        const direccionCodificada = encodeURIComponent((pedido.direccion || '') + ', ' + (pedido.ciudad || '') + ', Paraguay');
         mapsUrl = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
         console.log('🔍 Buscando por dirección:', pedido.direccion);
     }
@@ -311,15 +392,25 @@ function abrirMapaExacto(pedidoId) {
     window.open(mapsUrl, '_blank');
 }
 
-// Función de mapa antigua (mantener por compatibilidad)
-function abrirMapa(direccion) {
-    if (!direccion) {
-        alert('No hay dirección disponible');
-        return;
-    }
-    const direccionCodificada = encodeURIComponent(direccion + ', Paraguay');
-    const url = `https://www.google.com/maps/search/?api=1&query=${direccionCodificada}`;
-    window.open(url, '_blank');
+// ==================== FILTROS ====================
+function inicializarFiltros() {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remover clase active de todos los botones
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active', 'bg-green-100', 'text-green-800');
+                b.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            
+            // Agregar clase active al botón clickeado
+            this.classList.remove('bg-gray-100', 'text-gray-600');
+            this.classList.add('active', 'bg-green-100', 'text-green-800');
+            
+            // Actualizar filtro
+            estadoApp.filtroActual = this.getAttribute('data-filter');
+            actualizarUI();
+        });
+    });
 }
 
 // ==================== EVENTOS ====================
@@ -340,7 +431,7 @@ refreshBtn.addEventListener('click', function() {
 
 acceptPedido.addEventListener('click', async function() {
     if (estadoApp.pedidoSeleccionado) {
-        const success = await actualizarEstadoPedido(estadoApp.pedidoSeleccionado.id, 'aceptado');
+        const success = await actualizarEstadoPedido(estadoApp.pedidoSeleccionado.firebaseId, 'aceptado');
         
         if (success) {
             pedidoModal.classList.add('hidden');
@@ -353,7 +444,7 @@ acceptPedido.addEventListener('click', async function() {
 
 completePedido.addEventListener('click', async function() {
     if (estadoApp.pedidoSeleccionado) {
-        const success = await actualizarEstadoPedido(estadoApp.pedidoSeleccionado.id, 'completado');
+        const success = await actualizarEstadoPedido(estadoApp.pedidoSeleccionado.firebaseId, 'completado');
         
         if (success) {
             pedidoModal.classList.add('hidden');
@@ -369,12 +460,17 @@ closeModal.addEventListener('click', function() {
 });
 
 // ==================== INICIALIZACIÓN ====================
-console.log('🚀 App de repartidores cargada');
-console.log('👤 Usuarios disponibles:', Object.keys(CONFIG.REPARTIDORES));
-
-// Service Worker para PWA (opcional)
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('✅ Service Worker registrado'))
-        .catch(error => console.log('❌ Error Service Worker:', error));
-}
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 App de repartidores cargada');
+    console.log('👤 Usuarios disponibles:', Object.keys(CONFIG.REPARTIDORES));
+    
+    // Inicializar filtros
+    inicializarFiltros();
+    
+    // Service Worker para PWA (opcional)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('✅ Service Worker registrado'))
+            .catch(error => console.log('❌ Error Service Worker:', error));
+    }
+});
