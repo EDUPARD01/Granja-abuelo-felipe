@@ -149,6 +149,22 @@
             padding: 1rem;
             margin-top: 1rem;
         }
+        .payment-option {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        .payment-option.selected {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+        .shipping-option {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+        .shipping-option.selected {
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+        }
     </style>
 </head>
 <body class="font-body bg-gray-50">
@@ -215,21 +231,74 @@
                         <input type="tel" id="customerPhone" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: 0981 123456" required>
                     </div>
                     
+                    <!-- Ciudad con opciones mejoradas -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad *</label>
                         <select id="customerCity" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
                             <option value="">Seleccione una ciudad</option>
-                            <option value="Asunción">Asunción</option>
-                            <option value="Ciudad del Este">Ciudad del Este</option>
-                            <option value="Encarnación">Encarnación</option>
-                            <option value="Coronel Oviedo">Coronel Oviedo</option>
-                            <option value="Pedro Juan Caballero">Pedro Juan Caballero</option>
-                            <option value="Concepción">Concepción</option>
-                            <option value="Villarrica">Villarrica</option>
-                            <option value="Pilar">Pilar</option>
-                            <option value="Caacupé">Caacupé</option>
-                            <option value="Otra">Otra</option>
+                            <!-- Las opciones se cargarán dinámicamente -->
                         </select>
+                    </div>
+                    
+                    <!-- Departamento/Municipio/Distrito (se muestra dinámicamente) -->
+                    <div id="locationDetails" class="hidden space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Departamento *</label>
+                            <select id="customerDepartment" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
+                                <option value="">Seleccione departamento</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Distrito *</label>
+                            <select id="customerDistrict" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
+                                <option value="">Seleccione distrito</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Método de Pago (solo para Coronel Oviedo) -->
+                    <div id="paymentMethodContainer" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Método de Pago *</label>
+                        <div class="space-y-3">
+                            <div class="payment-option rounded-lg p-4 cursor-pointer" data-value="efectivo">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full hidden"></div>
+                                    </div>
+                                    <span class="text-lg">💵 Efectivo al recibir</span>
+                                </div>
+                                <p class="text-sm text-gray-600 ml-8 mt-1">Pague cuando reciba su pedido</p>
+                            </div>
+                            <div class="payment-option rounded-lg p-4 cursor-pointer" data-value="transferencia">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full hidden"></div>
+                                    </div>
+                                    <span class="text-lg">🏦 Transferencia bancaria</span>
+                                </div>
+                                <p class="text-sm text-gray-600 ml-8 mt-1">Realice la transferencia antes de la entrega</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agencia de Envío (para otras ciudades) -->
+                    <div id="shippingAgencyContainer" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Agencia de Envío *</label>
+                        <select id="shippingAgency" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
+                            <option value="">Seleccione agencia de envío</option>
+                            <option value="tcd">🚚 TCD Envíos</option>
+                            <option value="las-golondrinas">🚛 Las Golondrinas</option>
+                            <option value="trans-cit">🚛 Trans Cit</option>
+                            <option value="express">🚀 Express Paraguay</option>
+                            <option value="otra">🏪 Otra agencia</option>
+                        </select>
+                    </div>
+
+                    <!-- Campo para otra agencia -->
+                    <div id="otherAgencyContainer" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Especifique la agencia *</label>
+                        <input type="text" id="otherAgency" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Nombre de la agencia de envío">
                     </div>
                     
                     <!-- Mapa Interactivo para Coronel Oviedo -->
@@ -433,6 +502,22 @@
                                 <p class="text-sm text-gray-600">Ubicación</p>
                                 <p id="summary-location" class="font-medium text-gray-800"></p>
                             </div>
+                            <div id="summary-department-container" class="hidden">
+                                <p class="text-sm text-gray-600">Departamento</p>
+                                <p id="summary-department" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div id="summary-district-container" class="hidden">
+                                <p class="text-sm text-gray-600">Distrito</p>
+                                <p id="summary-district" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div id="summary-payment-container" class="hidden">
+                                <p class="text-sm text-gray-600">Método de Pago</p>
+                                <p id="summary-payment" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div id="summary-shipping-container" class="hidden">
+                                <p class="text-sm text-gray-600">Agencia de Envío</p>
+                                <p id="summary-shipping" class="font-medium text-gray-800"></p>
+                            </div>
                         </div>
                         <div class="mt-4" id="summary-location-link-container">
                             <p class="text-sm text-gray-600">Enlace de ubicación:</p>
@@ -560,6 +645,34 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Datos de departamentos y distritos de Paraguay
+        const paraguayLocations = {
+            "Alto Paraguay": ["Fuerte Olimpo", "Mayor Pablo Lagerenza", "Carmelo Peralta"],
+            "Alto Paraná": ["Ciudad del Este", "Presidente Franco", "Hernandarias", "Itakyry", "Juan León Mallorquín", "Domingo Martínez de Irala", "Dr. Juan León Mallorquín", "Yguazú", "Dr. Raúl Peña"],
+            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
+            "Boquerón": ["Filadelfia", "Loma Plata", "Mariscal Estigarribia"],
+            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "Cnel. Oviedo", "Dr. Juan Manuel Frutos", "José Domingo Ocampos", "La Pastora", "Mcal. Francisco Solano López", "Nueva Londres", "Raúl Arsenio Oviedo", "Repatriación", "R.I. 3 Corrales", "San José de los Arroyos", "Santa Rosa del Mbutuy", "Simón Bolívar", "Tres de Febrero", "Vaquería", "Yhú"],
+            "Caazapá": ["Caazapá", "Abaí", "Buena Vista", "Dr. Moisés S. Bertoni", "General Higinio Morínigo", "Maciel", "San Juan Nepomuceno", "Tavaí", "3 de Mayo"],
+            "Canindeyú": ["Salto del Guairá", "Villa Ygatimí", "Curuguaty", "La Paloma del Espíritu Santo", "Katuetē", "Corpus Christi", "Yby Pytã", "Ypejhú", "Itanará"],
+            "Central": ["Asunción", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "Itauguá", "Lambaré", "Limpio", "Luque", "Mariano Roque Alonso", "Ñemby", "Nueva Italia", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
+            "Concepción": ["Concepción", "Azotey", "Belén", "Horqueta", "Loreto", "San Carlos del Apa", "San Lázaro", "Yby Yaú"],
+            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cordillera", "Juan de Mena", "Loma Grande", "Mbocayaty del Yhaguy", "Nueva Colombia", "Piribebuy", "Primero de Marzo", "San Bernardino", "Santa Elena", "Tobatí", "Valenzuela"],
+            "Guairá": ["Villarrica", "Borja", "Capitán Mauricio José Troche", "Coronel Martínez", "Dr. Bottrell", "Félix Pérez Cardozo", "Garay", "General Eugenio Alejandrino Garay", "Independencia", "Itapé", "Iturbe", "José Fassardi", "Mbocayaty del Guairá", "Natalicio Talavera", "Ñumi", "Paso Yobái", "San Salvador", "Yataity"],
+            "Itapúa": ["Encarnación", "Bella Vista", "Cambyretá", "Capitán Meza", "Capitán Miranda", "Carlos Antonio López", "Carmen del Paraná", "Coronel Bogado", "Edelira", "Fram", "General Artigas", "General Delgado", "Hohenau", "Jesús", "José Leandro Oviedo", "La Paz", "Leandro N. Alem", "Mayor Otaño", "Natalio", "Nueva Alborada", "Obligado", "Pirapó", "San Cosme y Damián", "San Pedro del Paraná", "San Rafael del Paraná", "Tomás Romero Pereira", "Trinidad", "Yatytay"],
+            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "San Miguel", "San Patricio", "Santa María", "Santa Rosa", "Santiago", "Villa Florida"],
+            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito", "Desmochados", "General José Eduvigis Díaz", "Guazú Cuá", "Humaitá", "Isla Umbú", "Laureles", "Mayor José de Jesús Martínez", "Paso de Patria", "San Juan de Ñeembucú", "Tacuaras", "Villa Franca", "Villa Oliva", "Villalbín"],
+            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "General Bernardino Caballero", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González de Santa Cruz", "Sapucai", "Tebicuary-mí", "Yaguarón", "Ybycuí", "Ybytymí"],
+            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval", "José Falcón", "Nanawa", "Puerto Pinasco", "Teniente Irala Fernández", "Teniente Esteban Martínez", "Vista Alegre"],
+            "San Pedro": ["San Pedro de Ycuamandiyú", "Antequera", "Capiibary", "Choré", "General Elizardo Aquino", "General Francisco Isidoro Resquín", "Guayauí", "Itacurubí del Rosario", "Lima", "Nueva Germania", "San Estanislao", "San Pablo", "Santa Rosa del Aguaray", "Tacuatí", "Unión", "Veinticinco de Diciembre", "Villa del Rosario", "Yataity del Norte", "Yrybucuá"]
+        };
+
+        // Ciudades principales para mostrar primero
+        const mainCities = [
+            "Asunción", "Ciudad del Este", "Encarnación", "Coronel Oviedo", 
+            "Pedro Juan Caballero", "Concepción", "Villarrica", "Pilar", 
+            "Caacupé", "San Juan Bautista", "Paraguarí", "San Pedro de Ycuamandiyú"
+        ];
+
         // Variables globales
         let currentStep = 1;
         let map;
@@ -568,6 +681,8 @@
         let selectedLng = -56.4428;
         let selectedAddress = "Centro de Coronel Oviedo";
         let googleMapsLink = "https://maps.google.com/?q=-25.4481,-56.4428";
+        let selectedPaymentMethod = '';
+        let selectedShippingAgency = '';
         
         const products = {
             leche: { name: "Leche de Cabra Fresca", price: 25000, quantity: 0 },
@@ -579,6 +694,14 @@
 
         // Elementos del DOM
         const customerCity = document.getElementById('customerCity');
+        const customerDepartment = document.getElementById('customerDepartment');
+        const customerDistrict = document.getElementById('customerDistrict');
+        const locationDetails = document.getElementById('locationDetails');
+        const paymentMethodContainer = document.getElementById('paymentMethodContainer');
+        const shippingAgencyContainer = document.getElementById('shippingAgencyContainer');
+        const otherAgencyContainer = document.getElementById('otherAgencyContainer');
+        const shippingAgency = document.getElementById('shippingAgency');
+        const otherAgency = document.getElementById('otherAgency');
         const coronelOviedoMap = document.getElementById('coronelOviedoMap');
         const otherCityReference = document.getElementById('otherCityReference');
         const steps = document.querySelectorAll('.step');
@@ -596,20 +719,32 @@
         
         // ==================== INICIALIZACIÓN ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Configurar evento para mostrar/ocultar mapa según ciudad
-            customerCity.addEventListener('change', function() {
-                if (this.value === 'Coronel Oviedo') {
-                    coronelOviedoMap.style.display = 'block';
-                    otherCityReference.classList.add('hidden');
-                    if (!map) {
-                        initMap();
-                    }
-                } else if (this.value) {
-                    coronelOviedoMap.style.display = 'none';
-                    otherCityReference.classList.remove('hidden');
+            // Inicializar select de ciudades
+            initializeCitySelect();
+            
+            // Configurar evento para mostrar/ocultar elementos según ciudad
+            customerCity.addEventListener('change', handleCityChange);
+            
+            // Configurar opciones de pago
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.querySelector('.bg-green-500').classList.add('hidden');
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('.bg-green-500').classList.remove('hidden');
+                    selectedPaymentMethod = this.getAttribute('data-value');
+                });
+            });
+            
+            // Configurar agencia de envío
+            shippingAgency.addEventListener('change', function() {
+                selectedShippingAgency = this.value;
+                if (this.value === 'otra') {
+                    otherAgencyContainer.classList.remove('hidden');
                 } else {
-                    coronelOviedoMap.style.display = 'none';
-                    otherCityReference.classList.add('hidden');
+                    otherAgencyContainer.classList.add('hidden');
                 }
             });
             
@@ -630,44 +765,164 @@
             });
         });
 
-       // ==================== FUNCIÓN MEJORADA PARA GUARDAR PEDIDO ====================
-async function guardarPedidoFirebase(pedidoData) {
-    try {
-        const pedidoId = 'PED' + Date.now();
-        
-        // Incluir coordenadas exactas si están disponibles
-        const datosPedido = {
-            id: pedidoId,
-            cliente: pedidoData.nombre,
-            telefono: pedidoData.telefono,
-            direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
-            productos: pedidoData.productos,
-            total: pedidoData.total,
-            fecha: firebase.firestore.FieldValue.serverTimestamp(),
-            estado: 'pendiente',
-            repartidor: ''
-        };
-
-        // Si es Coronel Oviedo y hay datos del mapa, agregar coordenadas exactas
-        if (pedidoData.ciudad === 'Coronel Oviedo' && map) {
-            datosPedido.direccion += ' | ' + selectedAddress;
-            datosPedido.coordenadas = {
-                lat: parseFloat(selectedLat),
-                lng: parseFloat(selectedLng)
-            };
-            datosPedido.mapa = googleMapsLink;
+        // ==================== FUNCIONES DE UBICACIÓN ====================
+        function initializeCitySelect() {
+            const citySelect = document.getElementById('customerCity');
+            citySelect.innerHTML = '<option value="">Seleccione una ciudad</option>';
+            
+            // Agregar ciudades principales primero
+            mainCities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+            
+            // Agregar separador
+            const separator = document.createElement('option');
+            separator.disabled = true;
+            separator.textContent = '──────────';
+            citySelect.appendChild(separator);
+            
+            // Agregar todas las demás ciudades
+            const allCities = getAllCities();
+            allCities.forEach(city => {
+                if (!mainCities.includes(city)) {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                }
+            });
         }
 
-        await db.collection('pedidos').doc(pedidoId).set(datosPedido);
-        
-        console.log('✅ Pedido guardado en Firebase:', pedidoId);
-        return true;
-        
-    } catch (error) {
-        console.error('❌ Error Firebase:', error);
-        return false;
-    }
-}
+        function getAllCities() {
+            const allCities = new Set();
+            
+            for (const department in paraguayLocations) {
+                paraguayLocations[department].forEach(district => {
+                    allCities.add(district);
+                });
+            }
+            
+            return Array.from(allCities).sort();
+        }
+
+        function findDepartmentForCity(city) {
+            for (const department in paraguayLocations) {
+                if (paraguayLocations[department].includes(city)) {
+                    return department;
+                }
+            }
+            return null;
+        }
+
+        function handleCityChange() {
+            const city = customerCity.value;
+            
+            // Ocultar todos los contenedores primero
+            locationDetails.classList.add('hidden');
+            paymentMethodContainer.classList.add('hidden');
+            shippingAgencyContainer.classList.add('hidden');
+            otherAgencyContainer.classList.add('hidden');
+            coronelOviedoMap.style.display = 'none';
+            otherCityReference.classList.add('hidden');
+            
+            if (city) {
+                const department = findDepartmentForCity(city);
+                
+                if (department) {
+                    // Mostrar detalles de ubicación
+                    customerDepartment.value = department;
+                    
+                    // Actualizar distritos según el departamento
+                    customerDistrict.innerHTML = '<option value="">Seleccione distrito</option>';
+                    paraguayLocations[department].forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district;
+                        option.textContent = district;
+                        if (district === city) {
+                            option.selected = true;
+                        }
+                        customerDistrict.appendChild(option);
+                    });
+                    
+                    locationDetails.classList.remove('hidden');
+                }
+                
+                // Mostrar/ocultar métodos de pago y envío según la ciudad
+                if (city === 'Coronel Oviedo') {
+                    paymentMethodContainer.classList.remove('hidden');
+                    coronelOviedoMap.style.display = 'block';
+                    if (!map) {
+                        initMap();
+                    }
+                } else {
+                    shippingAgencyContainer.classList.remove('hidden');
+                    otherCityReference.classList.remove('hidden');
+                }
+            }
+        }
+
+        // ==================== FUNCIÓN MEJORADA PARA GUARDAR PEDIDO ====================
+        async function guardarPedidoFirebase(pedidoData) {
+            try {
+                const pedidoId = 'PED' + Date.now();
+                
+                // Recolectar datos adicionales
+                const department = customerDepartment.value;
+                const district = customerDistrict.value;
+                
+                let paymentMethod = '';
+                let shippingAgency = '';
+                
+                if (pedidoData.ciudad === 'Coronel Oviedo') {
+                    paymentMethod = selectedPaymentMethod;
+                } else {
+                    shippingAgency = selectedShippingAgency;
+                    if (shippingAgency === 'otra') {
+                        shippingAgency = otherAgency.value;
+                    }
+                }
+                
+                const datosPedido = {
+                    id: pedidoId,
+                    cliente: pedidoData.nombre,
+                    telefono: pedidoData.telefono,
+                    ciudad: pedidoData.ciudad,
+                    departamento: department,
+                    distrito: district,
+                    direccion: pedidoData.ciudad + ' - ' + (pedidoData.referencia || ''),
+                    productos: pedidoData.productos,
+                    total: pedidoData.total,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp(),
+                    estado: 'pendiente',
+                    repartidor: '',
+                    metodoPago: paymentMethod,
+                    agenciaEnvio: shippingAgency
+                };
+
+                // Si es Coronel Oviedo y hay datos del mapa, agregar coordenadas exactas
+                if (pedidoData.ciudad === 'Coronel Oviedo' && map) {
+                    datosPedido.direccion += ' | ' + selectedAddress;
+                    datosPedido.coordenadas = {
+                        lat: parseFloat(selectedLat),
+                        lng: parseFloat(selectedLng)
+                    };
+                    datosPedido.mapa = googleMapsLink;
+                }
+
+                await db.collection('pedidos').doc(pedidoId).set(datosPedido);
+                
+                console.log('✅ Pedido guardado en Firebase:', pedidoId);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error Firebase:', error);
+                return false;
+            }
+        }
+
         // ==================== FUNCIÓN PRINCIPAL ====================
         async function enviarPedidoSistema() {
             if (!validateStep3()) {
@@ -677,7 +932,7 @@ async function guardarPedidoFirebase(pedidoData) {
             const pedidoData = {
                 nombre: document.getElementById('customerName').value,
                 telefono: document.getElementById('customerPhone').value,
-                ciudad: document.getElementById('customerCity').value,
+                ciudad: customerCity.value,
                 referencia: '',
                 productos: [],
                 total: 0,
@@ -769,159 +1024,25 @@ async function guardarPedidoFirebase(pedidoData) {
         }
 
         // ==================== MAPA MEJORADO ====================
-function initMap() {
-    const oviedoCenter = [selectedLat, selectedLng];
-    
-    map = L.map('interactive-map').setView(oviedoCenter, 14);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    
-    // Crear marcador inicial
-    marker = L.marker(oviedoCenter, {
-        draggable: true,
-        icon: L.divIcon({
-            className: 'custom-marker',
-            iconSize: [20, 20]
-        })
-    }).addTo(map);
-    
-    // ZONAS PREDEFINIDAS DE CORONEL OVIEDO (Actualizadas)
-    const zonasCoronelOviedo = [
-        { coords: [-25.4481, -56.4428], nombre: 'Centro - Plaza Principal' },
-        { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
-        { coords: [-25.4550, -56.4350], nombre: 'Barrio Santa Teresa' },
-        { coords: [-25.4380, -56.4500], nombre: 'Barrio San Antonio' },
-        { coords: [-25.4600, -56.4300], nombre: 'Barrio San Roque' },
-        { coords: [-25.4350, -56.4250], nombre: 'Barrio San Blas' },
-        { coords: [-25.4300, -56.4550], nombre: 'Barrio San Pablo' },
-        { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' },
-        { coords: [-25.4420, -56.4250], nombre: 'Barrio Santa Lucía' },
-        { coords: [-25.4500, -56.4550], nombre: 'Barrio Virgen del Rosario' },
-        { coords: [-25.4250, -56.4400], nombre: 'Barrio San Rafael' },
-        { coords: [-25.4700, -56.4350], nombre: 'Barrio San Juan' }
-    ];
-    
-    // Función para encontrar zona más cercana
-    function encontrarZonaCercana(lat, lng) {
-        let zonaMasCercana = 'Ubicación en Coronel Oviedo';
-        let distanciaMinima = 0.02; // Radio de ~2km
-        
-        for (const zona of zonasCoronelOviedo) {
-            const distancia = Math.sqrt(
-                Math.pow(lat - zona.coords[0], 2) + 
-                Math.pow(lng - zona.coords[1], 2)
-            );
+        function initMap() {
+            const oviedoCenter = [selectedLat, selectedLng];
             
-            if (distancia < distanciaMinima) {
-                distanciaMinima = distancia;
-                zonaMasCercana = zona.nombre;
-            }
-        }
-        
-        return zonaMasCercana;
-    }
-    
-    // Función para actualizar ubicación
-    function actualizarUbicacion(lat, lng) {
-        selectedLat = lat.toFixed(6);
-        selectedLng = lng.toFixed(6);
-        googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
-        
-        // Encontrar zona más cercana
-        const zona = encontrarZonaCercana(lat, lng);
-        selectedAddress = `${zona}`;
-        
-        updateLocationDisplay();
-        
-        // Mostrar notificación de zona detectada
-        mostrarNotificacionZona(zona);
-    }
-    
-    // Mostrar notificación de zona detectada
-    function mostrarNotificacionZona(zona) {
-        const notificacion = document.createElement('div');
-        notificacion.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-bounce';
-        notificacion.innerHTML = `
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Zona detectada: <strong>${zona}</strong></span>
-            </div>
-        `;
-        
-        document.body.appendChild(notificacion);
-        
-        // Remover después de 3 segundos
-        setTimeout(() => {
-            document.body.removeChild(notificacion);
-        }, 3000);
-    }
-    
-    // Evento para actualizar ubicación al arrastrar
-    marker.on('dragend', function(e) {
-        const position = marker.getLatLng();
-        actualizarUbicacion(position.lat, position.lng);
-    });
-    
-    // Evento para actualizar ubicación al hacer clic
-    map.on('click', function(e) {
-        const position = e.latlng;
-        actualizarUbicacion(position.lat, position.lng);
-        marker.setLatLng(position);
-    });
-    
-    // Agregar marcadores de zonas principales (opcional - para referencia)
-    zonasCoronelOviedo.forEach(zona => {
-        L.marker(zona.coords)
-            .addTo(map)
-            .bindPopup(`📍 ${zona.nombre}`)
-            .openPopup();
-    });
-    
-    // Agregar control de búsqueda
-    const searchControl = L.control({
-        position: 'topright'
-    });
-    
-    searchControl.onAdd = function(map) {
-        const div = L.DomUtil.create('div', 'search-control');
-        div.innerHTML = `
-            <div class="bg-white p-2 rounded-lg shadow-lg">
-                <input type="text" id="search-input" placeholder="Buscar en el mapa..." 
-                       class="w-full p-2 border rounded focus:ring-2 focus:ring-green-500">
-                <button onclick="buscarEnMapa()" class="w-full mt-2 bg-green-500 text-white p-2 rounded hover:bg-green-600">
-                    <i class="fas fa-search mr-2"></i>Buscar
-                </button>
-            </div>
-        `;
-        return div;
-    };
-    
-    searchControl.addTo(map);
-    
-    updateLocationDisplay();
-}
-
-// Función para buscar en el mapa
-function buscarEnMapa() {
-    const searchInput = document.getElementById('search-input');
-    const query = searchInput.value.toLowerCase();
-    
-    if (!query) return;
-    
-    // Búsqueda local en zonas predefinidas
-    const zonas = [
-        'centro', 'san miguel', 'santa teresa', 'san antonio', 
-        'san roque', 'san blas', 'san pablo', 'san josé',
-        'santa lucía', 'virgen del rosario', 'san rafael', 'san juan'
-    ];
-    
-    let zonaEncontrada = null;
-    
-    for (const zona of zonas) {
-        if (query.includes(zona)) {
-            // Encontrar coordenadas de la zona
+            map = L.map('interactive-map').setView(oviedoCenter, 14);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Crear marcador inicial
+            marker = L.marker(oviedoCenter, {
+                draggable: true,
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    iconSize: [20, 20]
+                })
+            }).addTo(map);
+            
+            // ZONAS PREDEFINIDAS DE CORONEL OVIEDO
             const zonasCoronelOviedo = [
                 { coords: [-25.4481, -56.4428], nombre: 'Centro - Plaza Principal' },
                 { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
@@ -937,35 +1058,63 @@ function buscarEnMapa() {
                 { coords: [-25.4700, -56.4350], nombre: 'Barrio San Juan' }
             ];
             
-            zonaEncontrada = zonasCoronelOviedo.find(z => 
-                z.nombre.toLowerCase().includes(zona)
-            );
-            break;
+            // Función para encontrar zona más cercana
+            function encontrarZonaCercana(lat, lng) {
+                let zonaMasCercana = 'Ubicación en Coronel Oviedo';
+                let distanciaMinima = 0.02;
+                
+                for (const zona of zonasCoronelOviedo) {
+                    const distancia = Math.sqrt(
+                        Math.pow(lat - zona.coords[0], 2) + 
+                        Math.pow(lng - zona.coords[1], 2)
+                    );
+                    
+                    if (distancia < distanciaMinima) {
+                        distanciaMinima = distancia;
+                        zonaMasCercana = zona.nombre;
+                    }
+                }
+                
+                return zonaMasCercana;
+            }
+            
+            // Función para actualizar ubicación
+            function actualizarUbicacion(lat, lng) {
+                selectedLat = lat.toFixed(6);
+                selectedLng = lng.toFixed(6);
+                googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
+                
+                // Encontrar zona más cercana
+                const zona = encontrarZonaCercana(lat, lng);
+                selectedAddress = `${zona}`;
+                
+                updateLocationDisplay();
+            }
+            
+            // Evento para actualizar ubicación al arrastrar
+            marker.on('dragend', function(e) {
+                const position = marker.getLatLng();
+                actualizarUbicacion(position.lat, position.lng);
+            });
+            
+            // Evento para actualizar ubicación al hacer clic
+            map.on('click', function(e) {
+                const position = e.latlng;
+                actualizarUbicacion(position.lat, position.lng);
+                marker.setLatLng(position);
+            });
+            
+            updateLocationDisplay();
         }
-    }
-    
-    if (zonaEncontrada) {
-        map.setView(zonaEncontrada.coords, 16);
-        marker.setLatLng(zonaEncontrada.coords);
-        actualizarUbicacion(zonaEncontrada.coords[0], zonaEncontrada.coords[1]);
-        
-        // Mostrar notificación
-        mostrarNotificacionZona(`Encontrado: ${zonaEncontrada.nombre}`);
-    } else {
-        alert('❌ Zona no encontrada. Intente con: Centro, San Miguel, Santa Teresa, etc.');
-    }
-}
 
-function updateLocationDisplay() {
-    document.getElementById('selected-lat').textContent = selectedLat;
-    document.getElementById('selected-lng').textContent = selectedLng;
-    document.getElementById('location-link').textContent = googleMapsLink;
-    document.getElementById('location-link').href = googleMapsLink;
-    document.getElementById('selected-address').textContent = selectedAddress;
-}
+        function updateLocationDisplay() {
+            document.getElementById('selected-lat').textContent = selectedLat;
+            document.getElementById('selected-lng').textContent = selectedLng;
+            document.getElementById('location-link').textContent = googleMapsLink;
+            document.getElementById('location-link').href = googleMapsLink;
+            document.getElementById('selected-address').textContent = selectedAddress;
+        }
 
-// ELIMINA completamente la función reverseGeocode si existe
-// No la necesitamos más
         // ==================== SISTEMA DE PASOS ====================
         function changeStep(step) {
             steps.forEach(s => s.classList.remove('active'));
@@ -980,9 +1129,11 @@ function updateLocationDisplay() {
         function validateStep1() {
             const name = document.getElementById('customerName').value;
             const phone = document.getElementById('customerPhone').value;
-            const city = document.getElementById('customerCity').value;
+            const city = customerCity.value;
+            const department = customerDepartment.value;
+            const district = customerDistrict.value;
             
-            if (!name || !phone || !city) {
+            if (!name || !phone || !city || !department || !district) {
                 alert('❌ Por favor, complete todos los campos obligatorios.');
                 return false;
             }
@@ -996,8 +1147,27 @@ function updateLocationDisplay() {
                 return false;
             }
             
-            // Validar referencia para otras ciudades
+            // Validar método de pago para Coronel Oviedo
+            if (city === 'Coronel Oviedo') {
+                if (!selectedPaymentMethod) {
+                    alert('❌ Por favor seleccione un método de pago.');
+                    return false;
+                }
+            }
+            
+            // Validar agencia de envío para otras ciudades
             if (city !== 'Coronel Oviedo') {
+                if (!selectedShippingAgency) {
+                    alert('❌ Por favor seleccione una agencia de envío.');
+                    return false;
+                }
+                
+                if (selectedShippingAgency === 'otra' && !otherAgency.value) {
+                    alert('❌ Por favor especifique la agencia de envío.');
+                    return false;
+                }
+                
+                // Validar referencia para otras ciudades
                 const referencia = document.getElementById('locationReferenceOther').value;
                 if (!referencia) {
                     alert('❌ Por favor, ingrese una dirección o referencia para la entrega.');
@@ -1033,10 +1203,12 @@ function updateLocationDisplay() {
         function updateOrderSummary() {
             document.getElementById('summary-name').textContent = document.getElementById('customerName').value;
             document.getElementById('summary-phone').textContent = document.getElementById('customerPhone').value;
-            document.getElementById('summary-city').textContent = document.getElementById('customerCity').value;
+            document.getElementById('summary-city').textContent = customerCity.value;
+            document.getElementById('summary-department').textContent = customerDepartment.value;
+            document.getElementById('summary-district').textContent = customerDistrict.value;
             
             // Actualizar ubicación en el resumen
-            const city = document.getElementById('customerCity').value;
+            const city = customerCity.value;
             let locationText = '';
             let locationLink = '';
             
@@ -1046,12 +1218,24 @@ function updateLocationDisplay() {
                 document.getElementById('summary-location-link-container').classList.remove('hidden');
                 document.getElementById('summary-location-link').href = locationLink;
                 document.getElementById('summary-location-link').textContent = locationLink;
+                document.getElementById('summary-payment-container').classList.remove('hidden');
+                document.getElementById('summary-payment').textContent = selectedPaymentMethod === 'efectivo' ? '💵 Efectivo al recibir' : '🏦 Transferencia bancaria';
+                document.getElementById('summary-shipping-container').classList.add('hidden');
             } else {
                 locationText = document.getElementById('locationReferenceOther').value;
                 document.getElementById('summary-location-link-container').classList.add('hidden');
+                document.getElementById('summary-payment-container').classList.add('hidden');
+                document.getElementById('summary-shipping-container').classList.remove('hidden');
+                let shippingText = selectedShippingAgency;
+                if (selectedShippingAgency === 'otra') {
+                    shippingText = otherAgency.value;
+                }
+                document.getElementById('summary-shipping').textContent = shippingText;
             }
             
             document.getElementById('summary-location').textContent = locationText;
+            document.getElementById('summary-department-container').classList.remove('hidden');
+            document.getElementById('summary-district-container').classList.remove('hidden');
             
             const productsSummary = document.getElementById('summary-products');
             productsSummary.innerHTML = '';
