@@ -767,18 +767,10 @@
             const department = customerDepartment.value;
             
             // Ocultar todos los contenedores primero
-            districtContainer.classList.add('hidden');
-            paymentMethodContainer.classList.add('hidden');
-            shippingAgencyContainer.classList.add('hidden');
-            otherAgencyContainer.classList.add('hidden');
-            coronelOviedoMap.style.display = 'none';
-            coronelOviedoReference.classList.add('hidden');
-            otherCityReference.classList.add('hidden');
+            hideAllLocationContainers();
             
             // Resetear valores
-            selectedPaymentMethod = '';
-            selectedShippingAgency = '';
-            customerDistrict.value = '';
+            resetLocationValues();
             
             if (department) {
                 // Mostrar distritos
@@ -798,22 +790,17 @@
             const district = customerDistrict.value;
             
             // Ocultar todos los contenedores primero
-            paymentMethodContainer.classList.add('hidden');
-            shippingAgencyContainer.classList.add('hidden');
-            otherAgencyContainer.classList.add('hidden');
-            coronelOviedoMap.style.display = 'none';
-            coronelOviedoReference.classList.add('hidden');
-            otherCityReference.classList.add('hidden');
+            hideAllLocationContainers();
             
             // Resetear valores
-            selectedPaymentMethod = '';
-            selectedShippingAgency = '';
+            resetLocationValues();
             
             if (district) {
                 // Verificar si es Coronel Oviedo
                 const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
                 
                 if (isCoronelOviedo) {
+                    // Mostrar solo opciones de Coronel Oviedo
                     paymentMethodContainer.classList.remove('hidden');
                     coronelOviedoMap.style.display = 'block';
                     coronelOviedoReference.classList.remove('hidden');
@@ -821,10 +808,33 @@
                         initMap();
                     }
                 } else {
+                    // Mostrar solo opciones para otras ciudades
                     shippingAgencyContainer.classList.remove('hidden');
                     otherCityReference.classList.remove('hidden');
                 }
             }
+        }
+
+        function hideAllLocationContainers() {
+            paymentMethodContainer.classList.add('hidden');
+            shippingAgencyContainer.classList.add('hidden');
+            otherAgencyContainer.classList.add('hidden');
+            coronelOviedoMap.style.display = 'none';
+            coronelOviedoReference.classList.add('hidden');
+            otherCityReference.classList.add('hidden');
+        }
+
+        function resetLocationValues() {
+            selectedPaymentMethod = '';
+            selectedShippingAgency = '';
+            shippingAgency.value = '';
+            otherAgency.value = '';
+            
+            // Limpiar selecciones de pago
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.bg-green-500').classList.add('hidden');
+            });
         }
 
         // ==================== VALIDACIÓN ====================
