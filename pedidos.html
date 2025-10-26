@@ -342,12 +342,6 @@
                         <textarea id="locationReference" rows="3" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Casa color azul, portón negro, a 2 cuadras del supermercado..." required></textarea>
                     </div>
                     
-                    <!-- Dirección/Referencia para OTRAS ciudades -->
-                    <div id="otherCityReference" class="hidden">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Dirección/Referencia *</label>
-                        <textarea id="locationReferenceOther" rows="3" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Barrio San Miguel, casa color azul, a 2 cuadras del supermercado..." required></textarea>
-                    </div>
-                    
                     <div class="flex justify-end mt-8">
                         <button id="nextToStep2" class="btn-primary flex items-center">
                             Continuar a Productos <i class="fas fa-arrow-right ml-2"></i>
@@ -504,7 +498,7 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <p class="text-sm text-gray-600">Dirección/Referencia</p>
+                            <p class="text-sm text-gray-600">Información de Entrega</p>
                             <p id="summary-location" class="font-medium text-gray-800"></p>
                         </div>
                         <div class="mt-4" id="summary-location-link-container">
@@ -597,7 +591,7 @@
                 </div>
                 
                 <div>
-                    <h4 class="font-display text-lg font-bold mb-4">Enlaces Rápidos</h4>
+                    <h4 class="font-display text-lg font-bold mb=4">Enlaces Rápidos</h4>
                     <div class="space-y-2">
                         <a href="index.html" class="block text-gray-300 hover:text-green-400 transition-colors">Inicio</a>
                         <a href="index.html#productos" class="block text-gray-300 hover:text-green-400 transition-colors">Productos</a>
@@ -619,679 +613,643 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-    // CONFIGURACIÓN FIREBASE - TUS DATOS REALES
-    const firebaseConfig = {
-        apiKey: "AIzaSyBi-UfoiEzwiMRv_9nH9ex_NWm7xVgtbEo",
-        authDomain: "granja-abuelo-felipe.firebaseapp.com",
-        projectId: "granja-abuelo-felipe",
-        storageBucket: "granja-abuelo-felipe.firebasestorage.app",
-        messagingSenderId: "164634430679",
-        appId: "1:164634430679:web:31bef3f832a6ccda26f492"
-    };
+        // CONFIGURACIÓN FIREBASE - TUS DATOS REALES
+        const firebaseConfig = {
+            apiKey: "AIzaSyBi-UfoiEzwiMRv_9nH9ex_NWm7xVgtbEo",
+            authDomain: "granja-abuelo-felipe.firebaseapp.com",
+            projectId: "granja-abuelo-felipe",
+            storageBucket: "granja-abuelo-felipe.firebasestorage.app",
+            messagingSenderId: "164634430679",
+            appId: "1:164634430679:web:31bef3f832a6ccda26f492"
+        };
 
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    // Datos de departamentos y distritos de Paraguay
-    const paraguayLocations = {
-        "Alto Paraguay": ["Fuerte Olimpo", "Mayor Pablo Lagerenza", "Carmelo Peralta"],
-        "Alto Paraná": ["Ciudad del Este", "Presidente Franco", "Hernandarias", "Itakyry", "Juan León Mallorquín", "Domingo Martínez de Irala", "Dr. Juan León Mallorquín", "Yguazú", "Dr. Raúl Peña"],
-        "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
-        "Boquerón": ["Filadelfia", "Loma Plata", "Mariscal Estigarribia"],
-        "Caaguazú": ["Coronel Oviedo", "Caaguazú", "Cnel. Oviedo", "Dr. Juan Manuel Frutos", "José Domingo Ocampos", "La Pastora", "Mcal. Francisco Solano López", "Nueva Londres", "Raúl Arsenio Oviedo", "Repatriación", "R.I. 3 Corrales", "San José de los Arroyos", "Santa Rosa del Mbutuy", "Simón Bolívar", "Tres de Febrero", "Vaquería", "Yhú"],
-        "Caazapá": ["Caazapá", "Abaí", "Buena Vista", "Dr. Moisés S. Bertoni", "General Higinio Morínigo", "Maciel", "San Juan Nepomuceno", "Tavaí", "3 de Mayo"],
-        "Canindeyú": ["Salto del Guairá", "Villa Ygatimí", "Curuguaty", "La Paloma del Espíritu Santo", "Katuetē", "Corpus Christi", "Yby Pytã", "Ypejhú", "Itanará"],
-        "Central": ["Asunción", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "Itauguá", "Lambaré", "Limpio", "Luque", "Mariano Roque Alonso", "Ñemby", "Nueva Italia", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
-        "Concepción": ["Concepción", "Azotey", "Belén", "Horqueta", "Loreto", "San Carlos del Apa", "San Lázaro", "Yby Yaú"],
-        "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cordillera", "Juan de Mena", "Loma Grande", "Mbocayaty del Yhaguy", "Nueva Colombia", "Piribebuy", "Primero de Marzo", "San Bernardino", "Santa Elena", "Tobatí", "Valenzuela"],
-        "Guairá": ["Villarrica", "Borja", "Capitán Mauricio José Troche", "Coronel Martínez", "Dr. Bottrell", "Félix Pérez Cardozo", "Garay", "General Eugenio Alejandrino Garay", "Independencia", "Itapé", "Iturbe", "José Fassardi", "Mbocayaty del Guairá", "Natalicio Talavera", "Ñumi", "Paso Yobái", "San Salvador", "Yataity"],
-        "Itapúa": ["Encarnación", "Bella Vista", "Cambyretá", "Capitán Meza", "Capitán Miranda", "Carlos Antonio López", "Carmen del Paraná", "Coronel Bogado", "Edelira", "Fram", "General Artigas", "General Delgado", "Hohenau", "Jesús", "José Leandro Oviedo", "La Paz", "Leandro N. Alem", "Mayor Otaño", "Natalio", "Nueva Alborada", "Obligado", "Pirapó", "San Cosme y Damián", "San Pedro del Paraná", "San Rafael del Paraná", "Tomás Romero Pereira", "Trinidad", "Yatytay"],
-        "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "San Miguel", "San Patricio", "Santa María", "Santa Rosa", "Santiago", "Villa Florida"],
-        "Ñeembucú": ["Pilar", "Alberdi", "Cerrito", "Desmochados", "General José Eduvigis Díaz", "Guazú Cuá", "Humaitá", "Isla Umbú", "Laureles", "Mayor José de Jesús Martínez", "Paso de Patria", "San Juan de Ñeembucú", "Tacuaras", "Villa Franca", "Villa Oliva", "Villalbín"],
-        "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "General Bernardino Caballero", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González de Santa Cruz", "Sapucai", "Tebicuary-mí", "Yaguarón", "Ybycuí", "Ybytymí"],
-        "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval", "José Falcón", "Nanawa", "Puerto Pinasco", "Teniente Irala Fernández", "Teniente Esteban Martínez", "Vista Alegre"],
-        "San Pedro": ["San Pedro de Ycuamandiyú", "Antequera", "Capiibary", "Choré", "General Elizardo Aquino", "General Francisco Isidoro Resquín", "Guayauí", "Itacurubí del Rosario", "Lima", "Nueva Germania", "San Estanislao", "San Pablo", "Santa Rosa del Aguaray", "Tacuatí", "Unión", "Veinticinco de Diciembre", "Villa del Rosario", "Yataity del Norte", "Yrybucuá"]
-    };
+        // Datos de departamentos y distritos de Paraguay
+        const paraguayLocations = {
+            "Alto Paraguay": ["Fuerte Olimpo", "Mayor Pablo Lagerenza", "Carmelo Peralta"],
+            "Alto Paraná": ["Ciudad del Este", "Presidente Franco", "Hernandarias", "Itakyry", "Juan León Mallorquín", "Domingo Martínez de Irala", "Dr. Juan León Mallorquín", "Yguazú", "Dr. Raúl Peña"],
+            "Amambay": ["Pedro Juan Caballero", "Bella Vista Norte", "Capitán Bado"],
+            "Boquerón": ["Filadelfia", "Loma Plata", "Mariscal Estigarribia"],
+            "Caaguazú": ["Coronel Oviedo", "Caaguazú", "Cnel. Oviedo", "Dr. Juan Manuel Frutos", "José Domingo Ocampos", "La Pastora", "Mcal. Francisco Solano López", "Nueva Londres", "Raúl Arsenio Oviedo", "Repatriación", "R.I. 3 Corrales", "San José de los Arroyos", "Santa Rosa del Mbutuy", "Simón Bolívar", "Tres de Febrero", "Vaquería", "Yhú"],
+            "Caazapá": ["Caazapá", "Abaí", "Buena Vista", "Dr. Moisés S. Bertoni", "General Higinio Morínigo", "Maciel", "San Juan Nepomuceno", "Tavaí", "3 de Mayo"],
+            "Canindeyú": ["Salto del Guairá", "Villa Ygatimí", "Curuguaty", "La Paloma del Espíritu Santo", "Katuetē", "Corpus Christi", "Yby Pytã", "Ypejhú", "Itanará"],
+            "Central": ["Asunción", "Areguá", "Capiatá", "Fernando de la Mora", "Guarambaré", "Itá", "Itauguá", "Lambaré", "Limpio", "Luque", "Mariano Roque Alonso", "Ñemby", "Nueva Italia", "San Antonio", "San Lorenzo", "Villa Elisa", "Villeta", "Ypacaraí", "Ypané"],
+            "Concepción": ["Concepción", "Azotey", "Belén", "Horqueta", "Loreto", "San Carlos del Apa", "San Lázaro", "Yby Yaú"],
+            "Cordillera": ["Caacupé", "Altos", "Arroyos y Esteros", "Atyrá", "Caraguatay", "Emboscada", "Eusebio Ayala", "Isla Pucú", "Itacurubí de la Cordillera", "Juan de Mena", "Loma Grande", "Mbocayaty del Yhaguy", "Nueva Colombia", "Piribebuy", "Primero de Marzo", "San Bernardino", "Santa Elena", "Tobatí", "Valenzuela"],
+            "Guairá": ["Villarrica", "Borja", "Capitán Mauricio José Troche", "Coronel Martínez", "Dr. Bottrell", "Félix Pérez Cardozo", "Garay", "General Eugenio Alejandrino Garay", "Independencia", "Itapé", "Iturbe", "José Fassardi", "Mbocayaty del Guairá", "Natalicio Talavera", "Ñumi", "Paso Yobái", "San Salvador", "Yataity"],
+            "Itapúa": ["Encarnación", "Bella Vista", "Cambyretá", "Capitán Meza", "Capitán Miranda", "Carlos Antonio López", "Carmen del Paraná", "Coronel Bogado", "Edelira", "Fram", "General Artigas", "General Delgado", "Hohenau", "Jesús", "José Leandro Oviedo", "La Paz", "Leandro N. Alem", "Mayor Otaño", "Natalio", "Nueva Alborada", "Obligado", "Pirapó", "San Cosme y Damián", "San Pedro del Paraná", "San Rafael del Paraná", "Tomás Romero Pereira", "Trinidad", "Yatytay"],
+            "Misiones": ["San Juan Bautista", "Ayolas", "San Ignacio", "San Miguel", "San Patricio", "Santa María", "Santa Rosa", "Santiago", "Villa Florida"],
+            "Ñeembucú": ["Pilar", "Alberdi", "Cerrito", "Desmochados", "General José Eduvigis Díaz", "Guazú Cuá", "Humaitá", "Isla Umbú", "Laureles", "Mayor José de Jesús Martínez", "Paso de Patria", "San Juan de Ñeembucú", "Tacuaras", "Villa Franca", "Villa Oliva", "Villalbín"],
+            "Paraguarí": ["Paraguarí", "Acahay", "Caapucú", "Carapeguá", "Escobar", "General Bernardino Caballero", "La Colmena", "Mbuyapey", "Pirayú", "Quiindy", "Quyquyhó", "San Roque González de Santa Cruz", "Sapucai", "Tebicuary-mí", "Yaguarón", "Ybycuí", "Ybytymí"],
+            "Presidente Hayes": ["Villa Hayes", "Benjamín Aceval", "José Falcón", "Nanawa", "Puerto Pinasco", "Teniente Irala Fernández", "Teniente Esteban Martínez", "Vista Alegre"],
+            "San Pedro": ["San Pedro de Ycuamandiyú", "Antequera", "Capiibary", "Choré", "General Elizardo Aquino", "General Francisco Isidoro Resquín", "Guayauí", "Itacurubí del Rosario", "Lima", "Nueva Germania", "San Estanislao", "San Pablo", "Santa Rosa del Aguaray", "Tacuatí", "Unión", "Veinticinco de Diciembre", "Villa del Rosario", "Yataity del Norte", "Yrybucuá"]
+        };
 
-    // Variables globales
-    let currentStep = 1;
-    let map;
-    let marker;
-    let selectedLat = -25.4481;
-    let selectedLng = -56.4428;
-    let selectedAddress = "Centro de Coronel Oviedo";
-    let googleMapsLink = "https://maps.google.com/?q=-25.4481,-56.4428";
-    let selectedPaymentMethod = '';
-    let selectedShippingAgency = '';
-    
-    const products = {
-        leche: { name: "Leche de Cabra Fresca", price: 25000, quantity: 0 },
-        queso: { name: "Queso de Cabra", price: 180000, quantity: 0 },
-        yogur: { name: "Yogur de Cabra Natural", price: 25000, quantity: 0 },
-        dulce: { name: "Dulce de Leche de Cabra", price: 60000, quantity: 0 },
-        kit: { name: "Kit de Degustación", price: 60000, quantity: 0 }
-    };
+        // Variables globales
+        let currentStep = 1;
+        let map;
+        let marker;
+        let selectedLat = -25.4481;
+        let selectedLng = -56.4428;
+        let selectedAddress = "Centro de Coronel Oviedo";
+        let googleMapsLink = "https://maps.google.com/?q=-25.4481,-56.4428";
+        let selectedPaymentMethod = '';
+        let selectedShippingAgency = '';
+        
+        const products = {
+            leche: { name: "Leche de Cabra Fresca", price: 25000, quantity: 0 },
+            queso: { name: "Queso de Cabra", price: 180000, quantity: 0 },
+            yogur: { name: "Yogur de Cabra Natural", price: 25000, quantity: 0 },
+            dulce: { name: "Dulce de Leche de Cabra", price: 60000, quantity: 0 },
+            kit: { name: "Kit de Degustación", price: 60000, quantity: 0 }
+        };
 
-    // Elementos del DOM
-    const customerDepartment = document.getElementById('customerDepartment');
-    const customerDistrict = document.getElementById('customerDistrict');
-    const districtContainer = document.getElementById('districtContainer');
-    const paymentMethodContainer = document.getElementById('paymentMethodContainer');
-    const shippingAgencyContainer = document.getElementById('shippingAgencyContainer');
-    const otherAgencyContainer = document.getElementById('otherAgencyContainer');
-    const shippingAgency = document.getElementById('shippingAgency');
-    const otherAgency = document.getElementById('otherAgency');
-    const coronelOviedoMap = document.getElementById('coronelOviedoMap');
-    const coronelOviedoReference = document.getElementById('coronelOviedoReference');
-    const otherCityReference = document.getElementById('otherCityReference');
-    const steps = document.querySelectorAll('.step');
-    const progressBar = document.getElementById('progress-bar');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const successMessage = document.getElementById('successMessage');
-    const errorMessage = document.getElementById('errorMessage');
-    
-    // Botones de navegación
-    const nextToStep2 = document.getElementById('nextToStep2');
-    const nextToStep3 = document.getElementById('nextToStep3');
-    const backToStep1 = document.getElementById('backToStep1');
-    const backToStep2 = document.getElementById('backToStep2');
-    const sendOrder = document.getElementById('sendOrder');
-    
-    // ==================== INICIALIZACIÓN ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Inicializando formulario de pedidos...');
+        // Elementos del DOM
+        const customerDepartment = document.getElementById('customerDepartment');
+        const customerDistrict = document.getElementById('customerDistrict');
+        const districtContainer = document.getElementById('districtContainer');
+        const paymentMethodContainer = document.getElementById('paymentMethodContainer');
+        const shippingAgencyContainer = document.getElementById('shippingAgencyContainer');
+        const otherAgencyContainer = document.getElementById('otherAgencyContainer');
+        const shippingAgency = document.getElementById('shippingAgency');
+        const otherAgency = document.getElementById('otherAgency');
+        const coronelOviedoMap = document.getElementById('coronelOviedoMap');
+        const coronelOviedoReference = document.getElementById('coronelOviedoReference');
+        const steps = document.querySelectorAll('.step');
+        const progressBar = document.getElementById('progress-bar');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
         
-        // Inicializar select de departamentos
-        initializeDepartmentSelect();
+        // Botones de navegación
+        const nextToStep2 = document.getElementById('nextToStep2');
+        const nextToStep3 = document.getElementById('nextToStep3');
+        const backToStep1 = document.getElementById('backToStep1');
+        const backToStep2 = document.getElementById('backToStep2');
+        const sendOrder = document.getElementById('sendOrder');
         
-        // Configurar evento para mostrar/ocultar elementos según departamento
-        customerDepartment.addEventListener('change', handleDepartmentChange);
-        
-        // Configurar evento para distrito
-        customerDistrict.addEventListener('change', handleDistrictChange);
-        
-        // Configurar opciones de pago
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.payment-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                    opt.querySelector('.bg-green-500').classList.add('hidden');
+        // ==================== INICIALIZACIÓN ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar select de departamentos
+            initializeDepartmentSelect();
+            
+            // Configurar evento para mostrar/ocultar elementos según departamento
+            customerDepartment.addEventListener('change', handleDepartmentChange);
+            
+            // Configurar evento para distrito
+            customerDistrict.addEventListener('change', handleDistrictChange);
+            
+            // Configurar opciones de pago
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.querySelector('.bg-green-500').classList.add('hidden');
+                    });
+                    this.classList.add('selected');
+                    this.querySelector('.bg-green-500').classList.remove('hidden');
+                    selectedPaymentMethod = this.getAttribute('data-value');
                 });
-                this.classList.add('selected');
-                this.querySelector('.bg-green-500').classList.remove('hidden');
-                selectedPaymentMethod = this.getAttribute('data-value');
-                console.log('Método de pago seleccionado:', selectedPaymentMethod);
             });
-        });
-        
-        // Configurar agencia de envío
-        shippingAgency.addEventListener('change', function() {
-            selectedShippingAgency = this.value;
-            console.log('Agencia seleccionada:', selectedShippingAgency);
-            if (this.value === 'otra') {
-                otherAgencyContainer.classList.remove('hidden');
-            } else {
-                otherAgencyContainer.classList.add('hidden');
-            }
-        });
-        
-        // Inicializar botones de cantidad
-        document.querySelectorAll('.quantity-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const product = e.target.closest('.quantity-btn').dataset.product;
-                const action = e.target.closest('.quantity-btn').dataset.action;
-                
-                if (action === 'increase') {
-                    products[product].quantity++;
-                } else if (action === 'decrease' && products[product].quantity > 0) {
-                    products[product].quantity--;
+            
+            // Configurar agencia de envío
+            shippingAgency.addEventListener('change', function() {
+                selectedShippingAgency = this.value;
+                if (this.value === 'otra') {
+                    otherAgencyContainer.classList.remove('hidden');
+                } else {
+                    otherAgencyContainer.classList.add('hidden');
                 }
-                
-                document.getElementById(`${product}-quantity`).textContent = products[product].quantity;
+            });
+            
+            // Inicializar botones de cantidad
+            document.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const product = e.target.closest('.quantity-btn').dataset.product;
+                    const action = e.target.closest('.quantity-btn').dataset.action;
+                    
+                    if (action === 'increase') {
+                        products[product].quantity++;
+                    } else if (action === 'decrease' && products[product].quantity > 0) {
+                        products[product].quantity--;
+                    }
+                    
+                    document.getElementById(`${product}-quantity`).textContent = products[product].quantity;
+                });
             });
         });
 
-        // Inicializar ocultando todos los contenedores
-        hideAllLocationContainers();
-    });
-
-    // ==================== FUNCIONES DE UBICACIÓN ====================
-    function initializeDepartmentSelect() {
-        const departmentSelect = document.getElementById('customerDepartment');
-        departmentSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
-        
-        // Agregar departamentos
-        Object.keys(paraguayLocations).forEach(department => {
-            const option = document.createElement('option');
-            option.value = department;
-            option.textContent = department;
-            departmentSelect.appendChild(option);
-        });
-    }
-
-    function hideAllLocationContainers() {
-        console.log('🔍 Ocultando todos los contenedores...');
-        districtContainer.classList.add('hidden');
-        paymentMethodContainer.classList.add('hidden');
-        shippingAgencyContainer.classList.add('hidden');
-        otherAgencyContainer.classList.add('hidden');
-        coronelOviedoMap.style.display = 'none';
-        coronelOviedoReference.classList.add('hidden');
-        otherCityReference.classList.add('hidden');
-    }
-
-    function resetLocationValues() {
-        console.log('🔄 Reseteando valores...');
-        selectedPaymentMethod = '';
-        selectedShippingAgency = '';
-        shippingAgency.value = '';
-        otherAgency.value = '';
-        
-        // Limpiar selecciones de pago
-        document.querySelectorAll('.payment-option').forEach(opt => {
-            opt.classList.remove('selected');
-            opt.querySelector('.bg-green-500').classList.add('hidden');
-        });
-    }
-
-    function handleDepartmentChange() {
-        const department = customerDepartment.value;
-        console.log('📌 Departamento seleccionado:', department);
-        
-        // Ocultar todos los contenedores primero
-        hideAllLocationContainers();
-        
-        // Resetear valores
-        resetLocationValues();
-        
-        if (department) {
-            // Mostrar distritos
-            customerDistrict.innerHTML = '<option value="">Seleccione distrito</option>';
-            paraguayLocations[department].forEach(district => {
+        // ==================== FUNCIONES DE UBICACIÓN ====================
+        function initializeDepartmentSelect() {
+            const departmentSelect = document.getElementById('customerDepartment');
+            departmentSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+            
+            // Agregar departamentos
+            Object.keys(paraguayLocations).forEach(department => {
                 const option = document.createElement('option');
-                option.value = district;
-                option.textContent = district;
-                customerDistrict.appendChild(option);
+                option.value = department;
+                option.textContent = department;
+                departmentSelect.appendChild(option);
             });
-            
-            districtContainer.classList.remove('hidden');
-            console.log('✅ Mostrando contenedor de distritos');
         }
-    }
 
-    function handleDistrictChange() {
-        const district = customerDistrict.value;
-        console.log('🏙️ Distrito seleccionado:', district);
-        
-        // Ocultar todos los contenedores primero
-        hideAllLocationContainers();
-        
-        // Resetear valores
-        resetLocationValues();
-        
-        if (district) {
-            // Verificar si es Coronel Oviedo
-            const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
-            console.log('📍 ¿Es Coronel Oviedo?', isCoronelOviedo);
+        function handleDepartmentChange() {
+            const department = customerDepartment.value;
             
-            if (isCoronelOviedo) {
-                console.log('🎯 Mostrando opciones para Coronel Oviedo');
-                paymentMethodContainer.classList.remove('hidden');
-                coronelOviedoMap.style.display = 'block';
-                coronelOviedoReference.classList.remove('hidden');
-                if (!map) {
-                    initMap();
+            // Ocultar todos los contenedores primero
+            districtContainer.classList.add('hidden');
+            paymentMethodContainer.classList.add('hidden');
+            shippingAgencyContainer.classList.add('hidden');
+            otherAgencyContainer.classList.add('hidden');
+            coronelOviedoMap.style.display = 'none';
+            coronelOviedoReference.classList.add('hidden');
+            
+            // Resetear valores
+            selectedPaymentMethod = '';
+            selectedShippingAgency = '';
+            customerDistrict.value = '';
+            
+            if (department) {
+                // Mostrar distritos
+                customerDistrict.innerHTML = '<option value="">Seleccione distrito</option>';
+                paraguayLocations[department].forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    customerDistrict.appendChild(option);
+                });
+                
+                districtContainer.classList.remove('hidden');
+            }
+        }
+
+        function handleDistrictChange() {
+            const district = customerDistrict.value;
+            
+            // Ocultar todos los contenedores primero
+            paymentMethodContainer.classList.add('hidden');
+            shippingAgencyContainer.classList.add('hidden');
+            otherAgencyContainer.classList.add('hidden');
+            coronelOviedoMap.style.display = 'none';
+            coronelOviedoReference.classList.add('hidden');
+            
+            // Resetear valores
+            selectedPaymentMethod = '';
+            selectedShippingAgency = '';
+            
+            if (district) {
+                // Verificar si es Coronel Oviedo
+                const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
+                
+                if (isCoronelOviedo) {
+                    // SOLO para Coronel Oviedo: Mostrar Mapa + Referencia + Método de pago
+                    paymentMethodContainer.classList.remove('hidden');
+                    coronelOviedoMap.style.display = 'block';
+                    coronelOviedoReference.classList.remove('hidden');
+                    if (!map) {
+                        initMap();
+                    }
+                } else {
+                    // Para OTRAS ciudades: Mostrar SOLO Agencia de envío (NO mostrar referencia)
+                    shippingAgencyContainer.classList.remove('hidden');
                 }
-            } else {
-                console.log('🚚 Mostrando opciones para otras ciudades');
-                shippingAgencyContainer.classList.remove('hidden');
-                otherCityReference.classList.remove('hidden');
             }
         }
-    }
 
-    // ==================== VALIDACIÓN ====================
-    function validateStep1() {
-        const name = document.getElementById('customerName').value;
-        const phone = document.getElementById('customerPhone').value;
-        const department = customerDepartment.value;
-        const district = customerDistrict.value;
-        
-        console.log('🔍 Validando paso 1:', { name, phone, department, district });
-        
-        if (!name || !phone || !department || !district) {
-            alert('❌ Por favor, complete todos los campos obligatorios.');
-            return false;
-        }
-        
-        // Validar formato de teléfono paraguayo
-        const phoneRegex = /^(595|0)?9[0-9]{8}$/;
-        const cleanPhone = phone.replace(/\s+/g, '').replace('+', '').replace('-', '');
-        
-        if (!phoneRegex.test(cleanPhone)) {
-            alert('❌ Por favor ingresa un número de WhatsApp válido de Paraguay (ej: 0981123456)');
-            return false;
-        }
-        
-        // Validar método de pago para Coronel Oviedo
-        const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
-        console.log('💰 Validando para Coronel Oviedo:', isCoronelOviedo);
-        
-        if (isCoronelOviedo) {
-            if (!selectedPaymentMethod) {
-                alert('❌ Por favor seleccione un método de pago.');
-                return false;
-            }
-            
-            // Validar referencia para Coronel Oviedo
-            const referencia = document.getElementById('locationReference').value;
-            console.log('📝 Referencia Coronel Oviedo:', referencia);
-            if (!referencia) {
-                alert('❌ Por favor, ingrese una dirección o referencia para la entrega.');
-                return false;
-            }
-        } else {
-            // Validar agencia de envío para otras ciudades
-            if (!selectedShippingAgency) {
-                alert('❌ Por favor seleccione una agencia de envío.');
-                return false;
-            }
-            
-            if (selectedShippingAgency === 'otra' && !otherAgency.value) {
-                alert('❌ Por favor especifique la agencia de envío.');
-                return false;
-            }
-            
-            // Validar referencia para otras ciudades
-            const referencia = document.getElementById('locationReferenceOther').value;
-            console.log('📦 Referencia otras ciudades:', referencia);
-            if (!referencia) {
-                alert('❌ Por favor, ingrese una dirección o referencia para la entrega.');
-                return false;
-            }
-        }
-        
-        return true;
-    }
-
-    function validateStep2() {
-        let hasProducts = false;
-        for (const product in products) {
-            if (products[product].quantity > 0) {
-                hasProducts = true;
-                break;
-            }
-        }
-        
-        if (!hasProducts) {
-            alert('❌ Por favor, seleccione al menos un producto.');
-            return false;
-        }
-        
-        return true;
-    }
-
-    function validateStep3() {
-        return validateStep1() && validateStep2();
-    }
-
-    // ==================== FUNCIÓN PARA GUARDAR PEDIDO ====================
-    async function guardarPedidoFirebase(pedidoData) {
-        try {
-            const pedidoId = 'PED' + Date.now();
-            
-            // Recolectar datos adicionales
+        // ==================== VALIDACIÓN ====================
+        function validateStep1() {
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
             const department = customerDepartment.value;
             const district = customerDistrict.value;
             
-            let paymentMethod = '';
-            let shippingAgency = '';
+            if (!name || !phone || !department || !district) {
+                alert('❌ Por favor, complete todos los campos obligatorios.');
+                return false;
+            }
             
+            // Validar formato de teléfono paraguayo
+            const phoneRegex = /^(595|0)?9[0-9]{8}$/;
+            const cleanPhone = phone.replace(/\s+/g, '').replace('+', '').replace('-', '');
+            
+            if (!phoneRegex.test(cleanPhone)) {
+                alert('❌ Por favor ingresa un número de WhatsApp válido de Paraguay (ej: 0981123456)');
+                return false;
+            }
+            
+            // Validar método de pago para Coronel Oviedo
             const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
             
             if (isCoronelOviedo) {
-                paymentMethod = selectedPaymentMethod;
+                if (!selectedPaymentMethod) {
+                    alert('❌ Por favor seleccione un método de pago.');
+                    return false;
+                }
+                
+                // Validar referencia para Coronel Oviedo
+                const referencia = document.getElementById('locationReference').value;
+                if (!referencia) {
+                    alert('❌ Por favor, ingrese una dirección o referencia para la entrega.');
+                    return false;
+                }
             } else {
-                shippingAgency = selectedShippingAgency;
-                if (shippingAgency === 'otra') {
-                    shippingAgency = otherAgency.value;
+                // Validar agencia de envío para otras ciudades
+                if (!selectedShippingAgency) {
+                    alert('❌ Por favor seleccione una agencia de envío.');
+                    return false;
+                }
+                
+                if (selectedShippingAgency === 'otra' && !otherAgency.value) {
+                    alert('❌ Por favor especifique la agencia de envío.');
+                    return false;
                 }
             }
             
-            const datosPedido = {
-                id: pedidoId,
-                cliente: pedidoData.nombre,
-                telefono: pedidoData.telefono,
-                ciudad: district,
-                departamento: department,
-                distrito: district,
-                direccion: district + ' - ' + (pedidoData.referencia || ''),
-                productos: pedidoData.productos,
-                total: pedidoData.total,
-                fecha: firebase.firestore.FieldValue.serverTimestamp(),
-                estado: 'pendiente',
-                repartidor: '',
-                metodoPago: paymentMethod,
-                agenciaEnvio: shippingAgency
+            return true;
+        }
+
+        function validateStep2() {
+            let hasProducts = false;
+            for (const product in products) {
+                if (products[product].quantity > 0) {
+                    hasProducts = true;
+                    break;
+                }
+            }
+            
+            if (!hasProducts) {
+                alert('❌ Por favor, seleccione al menos un producto.');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function validateStep3() {
+            return validateStep1() && validateStep2();
+        }
+
+        // ==================== FUNCIÓN PARA GUARDAR PEDIDO ====================
+        async function guardarPedidoFirebase(pedidoData) {
+            try {
+                const pedidoId = 'PED' + Date.now();
+                
+                // Recolectar datos adicionales
+                const department = customerDepartment.value;
+                const district = customerDistrict.value;
+                
+                let paymentMethod = '';
+                let shippingAgency = '';
+                
+                const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
+                
+                if (isCoronelOviedo) {
+                    paymentMethod = selectedPaymentMethod;
+                } else {
+                    shippingAgency = selectedShippingAgency;
+                    if (shippingAgency === 'otra') {
+                        shippingAgency = otherAgency.value;
+                    }
+                }
+                
+                const datosPedido = {
+                    id: pedidoId,
+                    cliente: pedidoData.nombre,
+                    telefono: pedidoData.telefono,
+                    ciudad: district,
+                    departamento: department,
+                    distrito: district,
+                    direccion: district + ' - ' + (pedidoData.referencia || ''),
+                    productos: pedidoData.productos,
+                    total: pedidoData.total,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp(),
+                    estado: 'pendiente',
+                    repartidor: '',
+                    metodoPago: paymentMethod,
+                    agenciaEnvio: shippingAgency
+                };
+
+                // Si es Coronel Oviedo y hay datos del mapa, agregar coordenadas exactas
+                if (isCoronelOviedo && map) {
+                    datosPedido.direccion += ' | ' + selectedAddress;
+                    datosPedido.coordenadas = {
+                        lat: parseFloat(selectedLat),
+                        lng: parseFloat(selectedLng)
+                    };
+                    datosPedido.mapa = googleMapsLink;
+                }
+
+                await db.collection('pedidos').doc(pedidoId).set(datosPedido);
+                
+                console.log('✅ Pedido guardado en Firebase:', pedidoId);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error Firebase:', error);
+                return false;
+            }
+        }
+
+        // ==================== FUNCIÓN PRINCIPAL ====================
+        async function enviarPedidoSistema() {
+            if (!validateStep3()) {
+                return false;
+            }
+            
+            const pedidoData = {
+                nombre: document.getElementById('customerName').value,
+                telefono: document.getElementById('customerPhone').value,
+                referencia: '',
+                productos: [],
+                total: 0,
+                fecha: new Date().toLocaleString('es-PY')
             };
 
-            // Si es Coronel Oviedo y hay datos del mapa, agregar coordenadas exactas
-            if (isCoronelOviedo && map) {
-                datosPedido.direccion += ' | ' + selectedAddress;
-                datosPedido.coordenadas = {
-                    lat: parseFloat(selectedLat),
-                    lng: parseFloat(selectedLng)
-                };
-                datosPedido.mapa = googleMapsLink;
-            }
-
-            await db.collection('pedidos').doc(pedidoId).set(datosPedido);
+            // Obtener referencia según la ciudad
+            const district = customerDistrict.value;
+            const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
             
-            console.log('✅ Pedido guardado en Firebase:', pedidoId);
-            return true;
-            
-        } catch (error) {
-            console.error('❌ Error Firebase:', error);
-            return false;
-        }
-    }
-
-    // ==================== FUNCIÓN PRINCIPAL ====================
-    async function enviarPedidoSistema() {
-        if (!validateStep3()) {
-            return false;
-        }
-        
-        const pedidoData = {
-            nombre: document.getElementById('customerName').value,
-            telefono: document.getElementById('customerPhone').value,
-            referencia: '',
-            productos: [],
-            total: 0,
-            fecha: new Date().toLocaleString('es-PY')
-        };
-
-        // Obtener referencia según la ciudad
-        const district = customerDistrict.value;
-        const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
-        
-        if (isCoronelOviedo) {
-            pedidoData.referencia = document.getElementById('locationReference').value;
-        } else {
-            pedidoData.referencia = document.getElementById('locationReferenceOther').value;
-        }
-
-        // Obtener productos seleccionados
-        let tieneProductos = false;
-        for (const product in products) {
-            if (products[product].quantity > 0) {
-                tieneProductos = true;
-                const subtotal = products[product].quantity * products[product].price;
-                pedidoData.total += subtotal;
-                pedidoData.productos.push({
-                    nombre: products[product].name,
-                    cantidad: products[product].quantity,
-                    precio: products[product].price
-                });
-            }
-        }
-        
-        if (!tieneProductos) {
-            alert('❌ Por favor selecciona al menos un producto');
-            return false;
-        }
-
-        // Mostrar loading
-        mostrarLoading();
-        
-        try {
-            console.log('📤 Enviando pedido a Firebase...');
-            
-            const success = await guardarPedidoFirebase(pedidoData);
-            
-            if (success) {
-                mostrarExito();
+            if (isCoronelOviedo) {
+                pedidoData.referencia = document.getElementById('locationReference').value;
             } else {
-                mostrarError();
+                // Para otras ciudades, no usar referencia
+                pedidoData.referencia = 'Entrega por agencia de envío';
             }
-            
-            return success;
-            
-        } catch (error) {
-            console.error('❌ Error general:', error);
-            mostrarError();
-            return false;
-        } finally {
-            ocultarLoading();
-        }
-    }
 
-    // ==================== FUNCIONES DE INTERFAZ ====================
-    function mostrarLoading() {
-        loadingOverlay.style.display = 'flex';
-        sendOrder.disabled = true;
-        sendOrder.innerHTML = '⏳ Enviando pedido...';
-    }
-
-    function ocultarLoading() {
-        loadingOverlay.style.display = 'none';
-        sendOrder.disabled = false;
-        sendOrder.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Confirmar y Enviar Pedido';
-    }
-
-    function mostrarExito() {
-        successMessage.classList.remove('hidden');
-        errorMessage.classList.add('hidden');
-        sendOrder.disabled = true;
-        sendOrder.innerHTML = '<i class="fas fa-check mr-2"></i> Pedido Enviado';
-        sendOrder.classList.remove('btn-primary');
-        sendOrder.classList.add('bg-gray-400', 'cursor-not-allowed');
-        
-        // Redirigir después de 5 segundos
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 5000);
-    }
-
-    function mostrarError() {
-        errorMessage.classList.remove('hidden');
-        successMessage.classList.add('hidden');
-    }
-
-    // ==================== MAPA ====================
-    function initMap() {
-        const oviedoCenter = [selectedLat, selectedLng];
-        
-        map = L.map('interactive-map').setView(oviedoCenter, 14);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-        
-        // Crear marcador inicial
-        marker = L.marker(oviedoCenter, {
-            draggable: true,
-            icon: L.divIcon({
-                className: 'custom-marker',
-                iconSize: [20, 20]
-            })
-        }).addTo(map);
-        
-        // ZONAS PREDEFINIDAS DE CORONEL OVIEDO
-        const zonasCoronelOviedo = [
-            { coords: [-25.4481, -56.4428], nombre: 'Centro - Plaza Principal' },
-            { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
-            { coords: [-25.4550, -56.4350], nombre: 'Barrio Santa Teresa' },
-            { coords: [-25.4380, -56.4500], nombre: 'Barrio San Antonio' },
-            { coords: [-25.4600, -56.4300], nombre: 'Barrio San Roque' },
-            { coords: [-25.4350, -56.4250], nombre: 'Barrio San Blas' },
-            { coords: [-25.4300, -56.4550], nombre: 'Barrio San Pablo' },
-            { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' },
-            { coords: [-25.4420, -56.4250], nombre: 'Barrio Santa Lucía' },
-            { coords: [-25.4500, -56.4550], nombre: 'Barrio Virgen del Rosario' },
-            { coords: [-25.4250, -56.4400], nombre: 'Barrio San Rafael' },
-            { coords: [-25.4700, -56.4350], nombre: 'Barrio San Juan' }
-        ];
-        
-        // Función para encontrar zona más cercana
-        function encontrarZonaCercana(lat, lng) {
-            let zonaMasCercana = 'Ubicación en Coronel Oviedo';
-            let distanciaMinima = 0.02;
-            
-            for (const zona of zonasCoronelOviedo) {
-                const distancia = Math.sqrt(
-                    Math.pow(lat - zona.coords[0], 2) + 
-                    Math.pow(lng - zona.coords[1], 2)
-                );
-                
-                if (distancia < distanciaMinima) {
-                    distanciaMinima = distancia;
-                    zonaMasCercana = zona.nombre;
+            // Obtener productos seleccionados
+            let tieneProductos = false;
+            for (const product in products) {
+                if (products[product].quantity > 0) {
+                    tieneProductos = true;
+                    const subtotal = products[product].quantity * products[product].price;
+                    pedidoData.total += subtotal;
+                    pedidoData.productos.push({
+                        nombre: products[product].name,
+                        cantidad: products[product].quantity,
+                        precio: products[product].price
+                    });
                 }
             }
             
-            return zonaMasCercana;
-        }
-        
-        // Función para actualizar ubicación
-        function actualizarUbicacion(lat, lng) {
-            selectedLat = lat.toFixed(6);
-            selectedLng = lng.toFixed(6);
-            googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
+            if (!tieneProductos) {
+                alert('❌ Por favor selecciona al menos un producto');
+                return false;
+            }
+
+            // Mostrar loading
+            mostrarLoading();
             
-            // Encontrar zona más cercana
-            const zona = encontrarZonaCercana(lat, lng);
-            selectedAddress = `${zona}`;
+            try {
+                console.log('Enviando pedido a Firebase...');
+                
+                const success = await guardarPedidoFirebase(pedidoData);
+                
+                if (success) {
+                    mostrarExito();
+                } else {
+                    mostrarError();
+                }
+                
+                return success;
+                
+            } catch (error) {
+                console.error('Error general:', error);
+                mostrarError();
+                return false;
+            } finally {
+                ocultarLoading();
+            }
+        }
+
+        // ==================== FUNCIONES DE INTERFAZ ====================
+        function mostrarLoading() {
+            loadingOverlay.style.display = 'flex';
+            sendOrder.disabled = true;
+            sendOrder.innerHTML = '⏳ Enviando pedido...';
+        }
+
+        function ocultarLoading() {
+            loadingOverlay.style.display = 'none';
+            sendOrder.disabled = false;
+            sendOrder.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Confirmar y Enviar Pedido';
+        }
+
+        function mostrarExito() {
+            successMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            sendOrder.disabled = true;
+            sendOrder.innerHTML = '<i class="fas fa-check mr-2"></i> Pedido Enviado';
+            sendOrder.classList.remove('btn-primary');
+            sendOrder.classList.add('bg-gray-400', 'cursor-not-allowed');
+            
+            // Redirigir después de 5 segundos
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 5000);
+        }
+
+        function mostrarError() {
+            errorMessage.classList.remove('hidden');
+            successMessage.classList.add('hidden');
+        }
+
+        // ==================== MAPA ====================
+        function initMap() {
+            const oviedoCenter = [selectedLat, selectedLng];
+            
+            map = L.map('interactive-map').setView(oviedoCenter, 14);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Crear marcador inicial
+            marker = L.marker(oviedoCenter, {
+                draggable: true,
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    iconSize: [20, 20]
+                })
+            }).addTo(map);
+            
+            // ZONAS PREDEFINIDAS DE CORONEL OVIEDO
+            const zonasCoronelOviedo = [
+                { coords: [-25.4481, -56.4428], nombre: 'Centro - Plaza Principal' },
+                { coords: [-25.4410, -56.4400], nombre: 'Barrio San Miguel' },
+                { coords: [-25.4550, -56.4350], nombre: 'Barrio Santa Teresa' },
+                { coords: [-25.4380, -56.4500], nombre: 'Barrio San Antonio' },
+                { coords: [-25.4600, -56.4300], nombre: 'Barrio San Roque' },
+                { coords: [-25.4350, -56.4250], nombre: 'Barrio San Blas' },
+                { coords: [-25.4300, -56.4550], nombre: 'Barrio San Pablo' },
+                { coords: [-25.4650, -56.4450], nombre: 'Barrio San José' },
+                { coords: [-25.4420, -56.4250], nombre: 'Barrio Santa Lucía' },
+                { coords: [-25.4500, -56.4550], nombre: 'Barrio Virgen del Rosario' },
+                { coords: [-25.4250, -56.4400], nombre: 'Barrio San Rafael' },
+                { coords: [-25.4700, -56.4350], nombre: 'Barrio San Juan' }
+            ];
+            
+            // Función para encontrar zona más cercana
+            function encontrarZonaCercana(lat, lng) {
+                let zonaMasCercana = 'Ubicación en Coronel Oviedo';
+                let distanciaMinima = 0.02;
+                
+                for (const zona of zonasCoronelOviedo) {
+                    const distancia = Math.sqrt(
+                        Math.pow(lat - zona.coords[0], 2) + 
+                        Math.pow(lng - zona.coords[1], 2)
+                    );
+                    
+                    if (distancia < distanciaMinima) {
+                        distanciaMinima = distancia;
+                        zonaMasCercana = zona.nombre;
+                    }
+                }
+                
+                return zonaMasCercana;
+            }
+            
+            // Función para actualizar ubicación
+            function actualizarUbicacion(lat, lng) {
+                selectedLat = lat.toFixed(6);
+                selectedLng = lng.toFixed(6);
+                googleMapsLink = `https://maps.google.com/?q=${selectedLat},${selectedLng}`;
+                
+                // Encontrar zona más cercana
+                const zona = encontrarZonaCercana(lat, lng);
+                selectedAddress = `${zona}`;
+                
+                updateLocationDisplay();
+            }
+            
+            // Evento para actualizar ubicación al arrastrar
+            marker.on('dragend', function(e) {
+                const position = marker.getLatLng();
+                actualizarUbicacion(position.lat, position.lng);
+            });
+            
+            // Evento para actualizar ubicación al hacer clic
+            map.on('click', function(e) {
+                const position = e.latlng;
+                actualizarUbicacion(position.lat, position.lng);
+                marker.setLatLng(position);
+            });
             
             updateLocationDisplay();
         }
-        
-        // Evento para actualizar ubicación al arrastrar
-        marker.on('dragend', function(e) {
-            const position = marker.getLatLng();
-            actualizarUbicacion(position.lat, position.lng);
-        });
-        
-        // Evento para actualizar ubicación al hacer clic
-        map.on('click', function(e) {
-            const position = e.latlng;
-            actualizarUbicacion(position.lat, position.lng);
-            marker.setLatLng(position);
-        });
-        
-        updateLocationDisplay();
-    }
 
-    function updateLocationDisplay() {
-        document.getElementById('selected-lat').textContent = selectedLat;
-        document.getElementById('selected-lng').textContent = selectedLng;
-        document.getElementById('location-link').textContent = googleMapsLink;
-        document.getElementById('location-link').href = googleMapsLink;
-        document.getElementById('selected-address').textContent = selectedAddress;
-    }
-
-    // ==================== SISTEMA DE PASOS ====================
-    function changeStep(step) {
-        steps.forEach(s => s.classList.remove('active'));
-        document.getElementById(`step${step}`).classList.add('active');
-        currentStep = step;
-    }
-
-    function updateProgressBar(percentage) {
-        progressBar.style.width = `${percentage}%`;
-    }
-
-    // ==================== RESUMEN DEL PEDIDO ====================
-    function updateOrderSummary() {
-        document.getElementById('summary-name').textContent = document.getElementById('customerName').value;
-        document.getElementById('summary-phone').textContent = document.getElementById('customerPhone').value;
-        document.getElementById('summary-department').textContent = customerDepartment.value;
-        document.getElementById('summary-district').textContent = customerDistrict.value;
-        
-        // Actualizar ubicación en el resumen
-        const district = customerDistrict.value;
-        const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
-        
-        let locationText = '';
-        let locationLink = '';
-        
-        if (isCoronelOviedo) {
-            locationText = document.getElementById('locationReference').value;
-            locationLink = googleMapsLink;
-            document.getElementById('summary-location-link-container').classList.remove('hidden');
-            document.getElementById('summary-location-link').href = locationLink;
-            document.getElementById('summary-location-link').textContent = locationLink;
-            document.getElementById('summary-payment-container').classList.remove('hidden');
-            document.getElementById('summary-payment').textContent = selectedPaymentMethod === 'efectivo' ? '💵 Efectivo al recibir' : '🏦 Transferencia bancaria';
-            document.getElementById('summary-shipping-container').classList.add('hidden');
-        } else {
-            locationText = document.getElementById('locationReferenceOther').value;
-            document.getElementById('summary-location-link-container').classList.add('hidden');
-            document.getElementById('summary-payment-container').classList.add('hidden');
-            document.getElementById('summary-shipping-container').classList.remove('hidden');
-            let shippingText = selectedShippingAgency;
-            if (selectedShippingAgency === 'otra') {
-                shippingText = otherAgency.value;
-            }
-            document.getElementById('summary-shipping').textContent = shippingText;
+        function updateLocationDisplay() {
+            document.getElementById('selected-lat').textContent = selectedLat;
+            document.getElementById('selected-lng').textContent = selectedLng;
+            document.getElementById('location-link').textContent = googleMapsLink;
+            document.getElementById('location-link').href = googleMapsLink;
+            document.getElementById('selected-address').textContent = selectedAddress;
         }
-        
-        document.getElementById('summary-location').textContent = locationText;
-        
-        const productsSummary = document.getElementById('summary-products');
-        productsSummary.innerHTML = '';
-        
-        let total = 0;
-        for (const product in products) {
-            if (products[product].quantity > 0) {
-                const productTotal = products[product].quantity * products[product].price;
-                total += productTotal;
-                
-                const productElement = document.createElement('div');
-                productElement.className = 'flex justify-between items-center py-2 border-b border-blue-100';
-                productElement.innerHTML = `
-                    <span class="text-gray-700">${products[product].name} x${products[product].quantity}</span>
-                    <span class="font-bold text-gray-800">Gs. ${productTotal.toLocaleString()}</span>
-                `;
-                productsSummary.appendChild(productElement);
-            }
-        }
-        
-        document.getElementById('summary-total').textContent = `Gs. ${total.toLocaleString()}`;
-    }
 
-    // ==================== EVENT LISTENERS ====================
-    nextToStep2.addEventListener('click', () => {
-        if (validateStep1()) {
+        // ==================== SISTEMA DE PASOS ====================
+        function changeStep(step) {
+            steps.forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+        }
+
+        function updateProgressBar(percentage) {
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        // ==================== RESUMEN DEL PEDIDO ====================
+        function updateOrderSummary() {
+            document.getElementById('summary-name').textContent = document.getElementById('customerName').value;
+            document.getElementById('summary-phone').textContent = document.getElementById('customerPhone').value;
+            document.getElementById('summary-department').textContent = customerDepartment.value;
+            document.getElementById('summary-district').textContent = customerDistrict.value;
+            
+            // Actualizar ubicación en el resumen
+            const district = customerDistrict.value;
+            const isCoronelOviedo = district === 'Coronel Oviedo' || district === 'Cnel. Oviedo';
+            
+            let locationText = '';
+            let locationLink = '';
+            
+            if (isCoronelOviedo) {
+                locationText = document.getElementById('locationReference').value;
+                locationLink = googleMapsLink;
+                document.getElementById('summary-location-link-container').classList.remove('hidden');
+                document.getElementById('summary-location-link').href = locationLink;
+                document.getElementById('summary-location-link').textContent = locationLink;
+                document.getElementById('summary-payment-container').classList.remove('hidden');
+                document.getElementById('summary-payment').textContent = selectedPaymentMethod === 'efectivo' ? '💵 Efectivo al recibir' : '🏦 Transferencia bancaria';
+                document.getElementById('summary-shipping-container').classList.add('hidden');
+            } else {
+                // Para otras ciudades, no mostrar dirección/referencia en el resumen
+                locationText = 'Entrega por agencia de envío';
+                document.getElementById('summary-location-link-container').classList.add('hidden');
+                document.getElementById('summary-payment-container').classList.add('hidden');
+                document.getElementById('summary-shipping-container').classList.remove('hidden');
+                let shippingText = selectedShippingAgency;
+                if (selectedShippingAgency === 'otra') {
+                    shippingText = otherAgency.value;
+                }
+                document.getElementById('summary-shipping').textContent = shippingText;
+            }
+            
+            document.getElementById('summary-location').textContent = locationText;
+            
+            const productsSummary = document.getElementById('summary-products');
+            productsSummary.innerHTML = '';
+            
+            let total = 0;
+            for (const product in products) {
+                if (products[product].quantity > 0) {
+                    const productTotal = products[product].quantity * products[product].price;
+                    total += productTotal;
+                    
+                    const productElement = document.createElement('div');
+                    productElement.className = 'flex justify-between items-center py-2 border-b border-blue-100';
+                    productElement.innerHTML = `
+                        <span class="text-gray-700">${products[product].name} x${products[product].quantity}</span>
+                        <span class="font-bold text-gray-800">Gs. ${productTotal.toLocaleString()}</span>
+                    `;
+                    productsSummary.appendChild(productElement);
+                }
+            }
+            
+            document.getElementById('summary-total').textContent = `Gs. ${total.toLocaleString()}`;
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        nextToStep2.addEventListener('click', () => {
+            if (validateStep1()) {
+                changeStep(2);
+                updateProgressBar(66);
+            }
+        });
+
+        nextToStep3.addEventListener('click', () => {
+            if (validateStep2()) {
+                updateOrderSummary();
+                changeStep(3);
+                updateProgressBar(100);
+            }
+        });
+
+        backToStep1.addEventListener('click', () => {
+            changeStep(1);
+            updateProgressBar(33);
+        });
+
+        backToStep2.addEventListener('click', () => {
             changeStep(2);
             updateProgressBar(66);
-        }
-    });
+        });
 
-    nextToStep3.addEventListener('click', () => {
-        if (validateStep2()) {
-            updateOrderSummary();
-            changeStep(3);
-            updateProgressBar(100);
-        }
-    });
-
-    backToStep1.addEventListener('click', () => {
-        changeStep(1);
-        updateProgressBar(33);
-    });
-
-    backToStep2.addEventListener('click', () => {
-        changeStep(2);
-        updateProgressBar(66);
-    });
-
-    // Botón de enviar pedido
-    sendOrder.addEventListener('click', async (e) => {
-        e.preventDefault();
-        await enviarPedidoSistema();
-    });
-</script>
+        // Botón de enviar pedido
+        sendOrder.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await enviarPedidoSistema();
+        });
+    </script>
 </body>
 </html>
