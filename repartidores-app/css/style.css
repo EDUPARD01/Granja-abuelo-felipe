@@ -36,6 +36,17 @@ body {
     border-left: 4px solid #10b981;
 }
 
-.pedido-completado {
+.pedido-aceptado-otro {
     border-left: 4px solid #3b82f6;
+}
+
+.pedido-completado {
+    border-left: 4px solid #6b7280;
+}
+
+/* Filtros activos */
+.filter-btn.active {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    font-weight: 600;
 }
