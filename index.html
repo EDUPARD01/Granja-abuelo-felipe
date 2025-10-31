@@ -1,4 +1,6 @@
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="images/favicon.ico">
@@ -6,227 +8,195 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .font-display { font-family: 'Playfair Display', serif; }
-        .font-body { font-family: 'Inter', sans-serif; }
-        .hero-bg {
-            background: linear-gradient(135deg, #238861 0%, #ff0000 100%);
-        }
-        .product-card {
-            transition: all 0.3s ease;
-        }
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .whatsapp-btn {
-            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-            transition: all 0.3s ease;
-        }
-        .whatsapp-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-        }
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-
-
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="font-body">
     <!-- Header -->
-     <header class="bg-[#FFFFFF] fixed w-full top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
+    <header class="bg-white fixed w-full top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 lg:px-6 py-3 lg:py-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                        <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-15 h-15 object-contain">
+                <div class="flex items-center space-x-2 lg:space-x-3">
+                    <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                        <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
                     </div>
                     <div>
-                        <h1 class="font-display text-3xl font-extrabold text-gray-800 drop-shadow-lg tracking-wide">
-                         GRANJA ABUELO FELIPE
-                        </h1>
-                        <p class="text-sm text-gray-600">Leche de Cabra Artesanal</p>
+                        <h1 class="font-display text-xl lg:text-3xl font-bold text-gray-800">GRANJA ABUELO FELIPE</h1>
+                        <p class="text-xs lg:text-sm text-gray-600">Leche de Cabra Artesanal</p>
                     </div>
                 </div>
-                <nav class="hidden md:flex space-x-8">
+                <nav class="hidden lg:flex space-x-6 xl:space-x-8">
                     <a href="#inicio" class="text-gray-600 hover:text-green-700 font-medium transition-colors">Inicio</a>
                     <a href="#productos" class="text-gray-600 hover:text-green-700 font-medium transition-colors">Productos</a>
                     <a href="#ubicacion" class="text-gray-600 hover:text-green-700 font-medium transition-colors">Ubicación</a>
                     <a href="nosotros.html" class="text-gray-600 hover:text-green-700 font-medium transition-colors">Nosotros</a>
                     <a href="#contacto" class="text-gray-600 hover:text-green-700 font-medium transition-colors">Contacto</a>
-                    
                 </nav>
             </div>
         </div>
     </header>
-   
+
     <!-- Hero Section -->
-    <section id="inicio" class="min-h-screen flex items-center relative overflow-hidden pt-20">
+    <section id="inicio" class="min-h-screen flex items-center relative overflow-hidden pt-16 lg:pt-20">
         <div id="vanta-bg" class="absolute inset-0 z-0"></div>
-        <div class="container mx-auto px-6 py-12 relative z-10">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="text-white">
-                    <h1 class="font-display text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                        <span class="block text-[#F1F8E9]">Productos</span>
-                        <span class="block text-[#fcac03]">Artesanales</span>
-                        <span class="block text-[#F1F8E9]">de Cabra</span>
+        <div class="absolute inset-0 z-1 bg-gradient-to-br from-green-900/40 via-green-700/30 to-green-600/20"></div>
+        
+        <div class="container mx-auto px-4 lg:px-6 py-8 lg:py-12 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-8 xl:gap-12 items-center">
+                <div class="text-white text-center lg:text-left">
+                    <h1 class="font-display text-3xl lg:text-5xl xl:text-6xl font-bold mb-4 lg:mb-6 leading-tight">
+                        <span class="block text-white opacity-0 animate-slide-in-left" style="animation-delay: 0.2s">Productos</span>
+                        <span class="block text-yellow-300 opacity-0 animate-slide-in-left" style="animation-delay: 0.4s">Artesanales</span>
+                        <span class="block text-white opacity-0 animate-slide-in-left" style="animation-delay: 0.6s">de Cabra</span>
                     </h1>
-                    <p class="text-xl mb-8 text-green-100 leading-relaxed">
+                    <p class="text-base lg:text-xl mb-6 lg:mb-8 text-green-100 leading-relaxed opacity-0 animate-fade-in-up" style="animation-delay: 0.8s">
                         Desde nuestra granja familiar directo a tu mesa. Leche fresca, quesos y derivados elaborados con amor y tradición.
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#productos" class="bg-white text-green-600 px-8 py-4 rounded-full font-semibold text-center transition-all duration-300 transform hover:scale-105">
+                    <div class="flex flex-col sm:flex-row gap-3 lg:gap-4 opacity-0 animate-fade-in-up" style="animation-delay: 1s">
+                        <a href="#productos" 
+                           class="bg-white text-green-600 px-6 lg:px-8 py-3 lg:py-4 rounded-full font-semibold text-center transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center gap-2 lg:gap-3 group shadow-lg hover:shadow-xl backdrop-blur-sm bg-white/95 text-sm lg:text-base">
+                            <img src="images/icono-cabra.png" 
+                                 alt="Logo Cabra" 
+                                 class="w-6 h-6 lg:w-8 lg:h-8 object-contain transition-transform duration-300 group-hover:scale-110">
                             Ver Productos
                         </a>
+                        
                         <a href="pedidos.html" target="_blank" 
-                            class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold text-center inline-flex items-center gap-2">
-                          <i class="fab fa-whatsapp"></i> Hacer Pedido
+                           class="bg-green-500 hover:bg-green-600 text-white px-6 lg:px-8 py-3 lg:py-4 rounded-full font-semibold text-center inline-flex items-center justify-center gap-2 lg:gap-3 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl backdrop-blur-sm bg-green-500/95 text-sm lg:text-base">
+                            <i class="fas fa-shopping-basket text-xl lg:text-2xl"></i> 
+                            Hacer Pedido
                         </a>
-
                     </div>
                 </div>
-                <div class="relative">
+                
+                <div class="relative opacity-0 animate-float-in mt-8 lg:mt-0" style="animation-delay: 1.2s">
                     <div class="floating-animation">
-                        <img src="images/1000018059.jpg" alt="Leche de cabra fresca" class="w-full h-96 object-cover rounded-3xl shadow-2xl">
+                        <img src="images/1000018059.jpg" alt="Leche de cabra fresca" class="w-full h-64 lg:h-80 xl:h-96 object-cover rounded-2xl lg:rounded-3xl shadow-2xl border-4 border-white/20">
                     </div>
                 </div>
             </div>
         </div>
-</section>
-
+    </section>
 
     <!-- Products Section -->
-    <section id="productos" class="py-20 bg-gray-100">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl font-bold text-gray-800 mb-4">Nuestros Productos</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+    <section id="productos" class="py-12 lg:py-20 bg-gray-100">
+        <div class="container mx-auto px-4 lg:px-6">
+            <div class="text-center mb-12 lg:mb-16 fade-in">
+                <h2 class="font-display text-2xl lg:text-4xl font-bold text-gray-800 mb-4">Nuestros Productos</h2>
+                <p class="text-base lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
                     Cada producto es elaborado con la más alta calidad, respetando las tradiciones familiares y garantizando la frescura que caracteriza a la granja Abuelo Felipe.
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 <!-- Leche de Cabra -->
-                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
-                    <div class="h-64 bg-gradient-to-br from-green-100 to-green-200 relative">
+                <div class="product-card bg-white rounded-xl lg:rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
+                    <div class="h-48 lg:h-64 bg-gradient-to-br from-green-100 to-green-200 relative">
                         <img src="images/Imagen de leche con logo .png" alt="Leche de cabra" class="w-full h-full object-cover">
-                        <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <div class="absolute top-3 lg:top-4 right-3 lg:right-4 bg-green-500 text-white px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-semibold">
                            Disponible
                         </div>
                     </div>
-                    <div class="p-6 flex flex-col flex-1 justify-between">
-                        <h3 class="font-display text-2xl font-bold text-gray-800 mb-3">Leche de Cabra Fresca</h3>
-                        <p class="text-gray-600 mb-4 leading-relaxed min-h-[60px]">
-                              Nuestra leche de cabra es 100% natural, sin aditivos ni conservantes. Rica en calcio y fácil de digerir, perfecta para toda la familia.
+                    <div class="p-4 lg:p-6 flex flex-col flex-1 justify-between">
+                        <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-2 lg:mb-3">Leche de Cabra Fresca</h3>
+                        <p class="text-sm lg:text-base text-gray-600 mb-3 lg:mb-4 leading-relaxed">
+                            Nuestra leche de cabra es 100% natural, sin aditivos ni conservantes. Rica en calcio y fácil de digerir, perfecta para toda la familia.
                         </p>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-2xl font-bold text-green-600">Gs. 25.000</span>
-                            <span class="text-sm text-gray-500">1 litro</span>
+                        <div class="flex items-center justify-between mb-3 lg:mb-4">
+                            <span class="text-xl lg:text-2xl font-bold text-green-600">Gs. 25.000</span>
+                            <span class="text-xs lg:text-sm text-gray-500">1 litro</span>
                         </div>
-                        <a href="pedidos.html" class="block w-full bg-green-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors mt-auto">
+                        <a href="pedidos.html" class="block w-full bg-green-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors mt-auto text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
                 </div>
 
-              <!-- Queso de Cabra -->
-            <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
-            <div class="h-64 bg-gradient-to-br from-blue-100 to-blue-200 relative">
-              <img src="images/queso-cabra.jpg" alt="Queso de cabra" class="w-full h-full object-cover">
-            <div class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Por Pedido</div>
+                <!-- Queso de Cabra -->
+                <div class="product-card bg-white rounded-xl lg:rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
+                    <div class="h-48 lg:h-64 bg-gradient-to-br from-blue-100 to-blue-200 relative">
+                        <img src="images/queso-cabra.jpg" alt="Queso de cabra" class="w-full h-full object-cover">
+                        <div class="absolute top-3 lg:top-4 right-3 lg:right-4 bg-blue-500 text-white px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-semibold">Por Pedido</div>
+                    </div>
+                    <div class="p-4 lg:p-6 flex flex-col justify-between flex-1">
+                        <div>
+                            <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-2 lg:mb-3">Queso de Cabra</h3>
+                            <p class="text-sm lg:text-base text-gray-600 mb-3 lg:mb-4 leading-relaxed">
+                                Queso artesanal con un sabor suave y textura cremosa, con el sabor característico perfecto.
+                            </p>
+                            <div class="flex items-center justify-between mb-3 lg:mb-4">
+                                <span class="text-xl lg:text-2xl font-bold text-blue-600">Gs. 180.000</span>
+                                <span class="text-xs lg:text-sm text-gray-500">1kg</span>
+                            </div>
+                        </div>
+                        <a href="pedidos.html" target="_blank" class="block w-full bg-blue-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mt-auto text-sm lg:text-base">
+                            Hacer Pedido
+                        </a>
+                    </div>
                 </div>
-                  <div class="p-6 flex flex-col justify-between flex-1">
-                <div>
-                <h3 class="font-display text-2xl font-bold text-gray-800 mb-3">Queso de Cabra</h3>
-                <p class="text-gray-600 mb-4 leading-relaxed min-h-[80px]">Queso artesanal con un sabor suave y textura cremosa, con el sabor característico perfecto.
-                </p>
-              <div class="flex items-center justify-between mb-4">
-              <span class="text-2xl font-bold text-blue-600">Gs. 180.000</span>
-              <span class="text-sm text-gray-500">1kg</span>
-              </div>
-              </div>
-              <a href="pedidos.html" target="_blank" class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mt-auto">
-                  Hacer Pedido</a>
-             </div>
-          </div>
-
 
                 <!-- Yogur de Cabra -->
-                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
-                    <div class="h-64 bg-gradient-to-br from-purple-100 to-purple-200 relative">
+                <div class="product-card bg-white rounded-xl lg:rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
+                    <div class="h-48 lg:h-64 bg-gradient-to-br from-purple-100 to-purple-200 relative">
                         <img src="images/Imagen1b.png" alt="Yogur de cabra" class="w-full h-full object-cover">
-                        <div class="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <div class="absolute top-3 lg:top-4 right-3 lg:right-4 bg-purple-500 text-white px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-semibold">
                             Disponible
                         </div>
                     </div>
-                    <div class="p-6 flex flex-col flex-1 justify-between">
-                        <h3 class="font-display text-2xl font-bold text-gray-800 mb-3">Yogur de Cabra Natural</h3>
-                        <p class="text-gray-600 mb-4 leading-relaxed min-h-[80px]">
+                    <div class="p-4 lg:p-6 flex flex-col flex-1 justify-between">
+                        <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-2 lg:mb-3">Yogur de Cabra Natural</h3>
+                        <p class="text-sm lg:text-base text-gray-600 mb-3 lg:mb-4 leading-relaxed">
                             Yogur elaborado con leche de cabra fresca. Sin azúcar añadida, perfecto para un desayuno saludable y nutritivo.
                         </p>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-2xl font-bold text-purple-600">Gs. 25.000</span>
-                            <span class="text-sm text-gray-500">1 litro</span>
+                        <div class="flex items-center justify-between mb-3 lg:mb-4">
+                            <span class="text-xl lg:text-2xl font-bold text-purple-600">Gs. 25.000</span>
+                            <span class="text-xs lg:text-sm text-gray-500">1 litro</span>
                         </div>
-                        <a href="pedidos.html" target="_black" class="block w-full bg-purple-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors mt-auto">
+                        <a href="pedidos.html" target="_blank" class="block w-full bg-purple-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors mt-auto text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
                 </div>
 
                 <!-- Dulce de Leche -->
-                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
-                    <div class="h-64 bg-gradient-to-br from-yellow-100 to-yellow-200 relative">
+                <div class="product-card bg-white rounded-xl lg:rounded-2xl shadow-lg overflow-hidden fade-in flex flex-col">
+                    <div class="h-48 lg:h-64 bg-gradient-to-br from-yellow-100 to-yellow-200 relative">
                         <img src="images/Foto de dulce de leche.png" alt="Dulce de leche de cabra" class="w-full h-full object-cover">
                     </div>
-                    <div class="p-6 flex flex-col flex-1 justify-between">
-                        <h3 class="font-display text-2xl font-bold text-gray-800 mb-3">Dulce de Leche de Cabra</h3>
-                        <p class="text-gray-600 mb-4 leading-relaxed min-h-[80px]">
+                    <div class="p-4 lg:p-6 flex flex-col flex-1 justify-between">
+                        <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-2 lg:mb-3">Dulce de Leche de Cabra</h3>
+                        <p class="text-sm lg:text-base text-gray-600 mb-3 lg:mb-4 leading-relaxed">
                             Dulce de leche artesanal elaborado con leche de cabra con sabor único y cremoso.
                         </p>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-2xl font-bold text-yellow-600">Gs. 60.000</span>
-                            <span class="text-sm text-gray-500">1Kg</span>
+                        <div class="flex items-center justify-between mb-3 lg:mb-4">
+                            <span class="text-xl lg:text-2xl font-bold text-yellow-600">Gs. 60.000</span>
+                            <span class="text-xs lg:text-sm text-gray-500">1Kg</span>
                         </div>
-                        <a href="pedidos.html" target="_blank" class="block w-full bg-yellow-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors mt-auto">
+                        <a href="pedidos.html" target="_blank" class="block w-full bg-yellow-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors mt-auto text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
                 </div>
 
                 <!-- Kit de Degustación -->
-                <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
-                    <div class="h-64 bg-gradient-to-br from-pink-100 to-pink-200 relative">
-                        <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Kit de degustación" class="w-full h-full object-cover">
-                        <div class="absolute top-4 right-4 bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                <div class="product-card bg-white rounded-xl lg:rounded-2xl shadow-lg overflow-hidden fade-in">
+                    <div class="h-48 lg:h-64 bg-gradient-to-br from-pink-100 to-pink-200 relative">
+                        <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Kit de degustación" class="w-full h-full object-cover">
+                        <div class="absolute top-3 lg:top-4 right-3 lg:right-4 bg-pink-500 text-white px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm font-semibold">
                             Oferta
                         </div>
                     </div>
-                    <div class="p-6">
-                        <h3 class="font-display text-2xl font-bold text-gray-800 mb-3">Kit de Degustación 😋</h3>
-                        <p class="text-gray-600 mb-4 leading-relaxed">
+                    <div class="p-4 lg:p-6">
+                        <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-2 lg:mb-3">Kit de Degustación 😋</h3>
+                        <p class="text-sm lg:text-base text-gray-600 mb-3 lg:mb-4 leading-relaxed">
                             La mejor forma de probar todos nuestros productos. Incluye: leche, queso, yogur y dulce de leche.
                         </p>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-2xl font-bold text-pink-600">Gs. 60.000</span>
-                            <span class="text-sm text-gray-500">Kit completo</span>
+                        <div class="flex items-center justify-between mb-3 lg:mb-4">
+                            <span class="text-xl lg:text-2xl font-bold text-pink-600">Gs. 60.000</span>
+                            <span class="text-xs lg:text-sm text-gray-500">Kit completo</span>
                         </div>
-                        <a href="pedidos.html" target="_blank" class="block w-full bg-pink-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors">
+                        <a href="pedidos.html" target="_blank" class="block w-full bg-pink-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
@@ -235,74 +205,159 @@
         </div>
     </section>
 
-   <!-- Ubicación de la Granja -->
-<section id="ubicacion" class="py-20 bg-gray-100">
-    <div class="container mx-auto px-6">
-        <div class="grid md:grid-cols-2 gap-12 items-center fade-in">
-            <!-- Texto a la izquierda -->
-            <div class="text-left">
-                <h2 class="font-display text-4xl font-bold text-gray-800 mb-6">Nuestra Ubicación</h2>
-                <p class="text-xl text-gray-600 mb-12 leading-relaxed">
-                    Visítanos en la Granja Abuelo Felipe, ubicada en Paraguay. 
-                    Aquí podrás conocer más sobre nuestros productos y disfrutar de un ambiente familiar. 
-                    ¡Te esperamos con productos frescos y de calidad!
-                </p>
-            </div>
+    <!-- Ubicación de la Granja -->
+    <section id="ubicacion" class="py-12 lg:py-20 bg-gray-100">
+        <div class="container mx-auto px-4 lg:px-6">
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center fade-in">
+                <!-- Texto a la izquierda -->
+                <div class="text-center lg:text-left">
+                    <h2 class="font-display text-2xl lg:text-4xl font-bold text-gray-800 mb-4 lg:mb-6">Nuestra Ubicación</h2>
+                    <p class="text-base lg:text-xl text-gray-600 mb-8 lg:mb-12 leading-relaxed">
+                        Visítanos en la Granja Abuelo Felipe, ubicada en Paraguay. 
+                        Aquí podrás conocer más sobre nuestros productos y disfrutar de un ambiente familiar. 
+                        ¡Te esperamos con productos frescos y de calidad!
+                    </p>
+                </div>
 
-            <!-- Mapa a la derecha -->
-            <div class="w-full h-96 rounded-2xl overflow-hidden shadow-lg">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3188.2128673265524!2d-56.4022192!3d-25.3341493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945eefe686fb074f%3A0x43968d4862a25e88!2sGranja%20Abuelo%20Felipe!5e1!3m2!1ses-419!2spy!4v1759643179733!5m2!1ses-419!2spy" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+                <!-- Mapa a la derecha -->
+                <div class="w-full h-64 lg:h-96 rounded-xl lg:rounded-2xl overflow-hidden shadow-lg">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3188.2128673265524!2d-56.4022192!3d-25.3341493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945eefe686fb074f%3A0x43968d4862a25e88!2sGranja%20Abuelo%20Felipe!5e1!3m2!1ses-419!2spy!4v1759643179733!5m2!1ses-419!2spy" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Contact Section -->
-    <section id="contacto" class="py-20 bg-gradient-to-br from-green-50 to-purple-50">
-        <div class="container mx-auto px-6">
+    <section id="contacto" class="py-12 lg:py-20 bg-gradient-to-br from-green-50 to-purple-50">
+        <div class="container mx-auto px-4 lg:px-6">
             <div class="max-w-4xl mx-auto text-center">
                 <div class="fade-in">
-                    <h2 class="font-display text-4xl font-bold text-gray-800 mb-6">¿Listo para Probar Nuestros Productos?</h2>
-                    <p class="text-xl text-gray-600 mb-12 leading-relaxed">
-                        Realiza tu pedido directamente por WhatsApp y recibe los productos frescos de la granja Abuelo Felipe en la comodidad de tu hogar.
+                    <h2 class="font-display text-2xl lg:text-4xl font-bold text-gray-800 mb-4 lg:mb-6">¿Listo para Probar Nuestros Productos?</h2>
+                    <p class="text-base lg:text-xl text-gray-600 mb-8 lg:mb-12 leading-relaxed">
+                        Tenemos dos formas fáciles y rápidas para que puedas realizar tu pedido. 
+                        Elige la que más te convenga y recibe productos frescos directamente de nuestra granja.
                     </p>
                     
-                    <div class="grid md:grid-cols-2 gap-8 items-center">
-                        <div class="text-left">
-                            <h3 class="font-display text-2xl font-bold text-gray-800 mb-4">Cómo Realizar tu Pedido:</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm">1</div>
-                                    <p class="text-gray-600">Haz clic en el botón de WhatsApp</p>
+                    <div class="grid lg:grid-cols-2 gap-6 lg:gap-8">
+                        <!-- Opción 1: Pedido desde la Web -->
+                        <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-6 lg:p-8 border-2 border-green-200 hover:border-green-400 transition-all duration-300">
+                            <div class="w-12 h-12 lg:w-16 lg:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                                <i class="fas fa-shopping-cart text-green-600 text-xl lg:text-2xl"></i>
+                            </div>
+                            <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-3 lg:mb-4">Pedido desde la Web</h3>
+                            <p class="text-sm lg:text-base text-gray-600 mb-4 lg:mb-6 leading-relaxed">
+                                Completa nuestro formulario online y recibe confirmación inmediata. 
+                                Ideal para pedidos detallados y programación de entregas.
+                            </p>
+                            <div class="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
+                                <div class="flex items-start space-x-2 lg:space-x-3">
+                                    <div class="w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mt-0.5">1</div>
+                                    <p class="text-xs lg:text-sm text-gray-600 text-left">Completa el formulario con tus datos</p>
                                 </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm">2</div>
-                                    <p class="text-gray-600">Envía tu lista de productos deseados</p>
+                                <div class="flex items-start space-x-2 lg:space-x-3">
+                                    <div class="w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mt-0.5">2</div>
+                                    <p class="text-xs lg:text-sm text-gray-600 text-left">Selecciona productos y cantidades</p>
                                 </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold text-sm">3</div>
-                                    <p class="text-gray-600">Confirma tu dirección y horario de entrega</p>
+                                <div class="flex items-start space-x-2 lg:space-x-3">
+                                    <div class="w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mt-0.5">3</div>
+                                    <p class="text-xs lg:text-sm text-gray-600 text-left">Confirma tu pedido y listo</p>
                                 </div>
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold text-sm">4</div>
-                                    <p class="text-gray-600">¡Recibe tus productos frescos en casa!</p>
+                            </div>
+                            <a href="pedidos.html" class="block w-full bg-green-600 text-white text-center py-3 lg:py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm lg:text-base">
+                                Hacer Pedido Online
+                            </a>
+                        </div>
+                        
+                        <!-- Opción 2: Pedido por WhatsApp -->
+                        <div class="bg-white rounded-xl lg:rounded-2xl shadow-lg p-6 lg:p-8 border-2 border-green-200 hover:border-green-400 transition-all duration-300">
+                            <div class="w-12 h-12 lg:w-16 lg:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                                <i class="fab fa-whatsapp text-green-600 text-xl lg:text-2xl"></i>
+                            </div>
+                            <h3 class="font-display text-xl lg:text-2xl font-bold text-gray-800 mb-3 lg:mb-4">Pedido por WhatsApp</h3>
+                            <p class="text-sm lg:text-base text-gray-600 mb-4 lg:mb-6 leading-relaxed">
+                                Escríbenos directamente por WhatsApp para pedidos rápidos y atención personalizada. 
+                                Resolvemos tus dudas al instante.
+                            </p>
+                            <div class="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
+                                <div class="flex items-start space-x-2 lg:space-x-3">
+                                    <div class="w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mt-0.5">1</div>
+                                    <p class="text-xs lg:text-sm text-gray-600 text-left">Elige a quién contactar</p>
+                                </div>
+                                <div class="flex items-start space-x-2 lg:space-x-3">
+                                    <div class="w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mt-0.5">2</div>
+                                    <p class="text-xs lg:text-sm text-gray-600 text-left">Envía tu lista de productos</p>
+                                </div>
+                                <div class="flex items-start space-x-2 lg:space-x-3">
+                                    <div class="w-5 h-5 lg:w-6 lg:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs mt-0.5">3</div>
+                                    <p class="text-xs lg:text-sm text-gray-600 text-left">Confirma y recibe en casa</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Menú desplegable de WhatsApp -->
+                            <div class="mb-4">
+                                <button id="whatsappDropdownButton" class="w-full bg-green-600 text-white py-3 lg:py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 text-sm lg:text-base">
+                                    <i class="fab fa-whatsapp text-xl lg:text-2xl"></i>
+                                    <span>Pedir por WhatsApp</span>
+                                    <i class="fas fa-chevron-down ml-1 lg:ml-2 transition-transform duration-300 text-sm"></i>
+                                </button>
+                                
+                                <div id="whatsappDropdown" class="hidden mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                                    <a href="https://wa.me/595975308118" target="_blank" class="flex items-center space-x-3 p-3 lg:p-4 hover:bg-green-50 transition-colors border-b border-gray-100">
+                                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fab fa-whatsapp text-green-600 text-lg lg:text-xl"></i>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <p class="font-semibold text-gray-800 text-sm lg:text-base">Rocio Barrera</p>
+                                            <p class="text-xs lg:text-sm text-gray-600">+595 975 308118</p>
+                                        </div>
+                                        <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
+                                    </a>
+                                    
+                                    <a href="https://wa.me/595975318433" target="_blank" class="flex items-center space-x-3 p-3 lg:p-4 hover:bg-green-50 transition-colors">
+                                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fab fa-whatsapp text-green-600 text-lg lg:text-xl"></i>
+                                        </div>
+                                        <div class="text-left flex-1">
+                                            <p class="font-semibold text-gray-800 text-sm lg:text-base">Ronaldo Adorno</p>
+                                            <p class="text-xs lg:text-sm text-gray-600">+595 975 318433</p>
+                                        </div>
+                                        <i class="fas fa-external-link-alt text-gray-400 text-sm"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="flex justify-center">
-                            <div class="flex justify-center">
-                              <a href="https://wa.me/595975308118" target="_blank" 
-                                 class="whatsapp-btn text-white px-10 py-4 rounded-full font-bold text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-     
-                               <i class="fab fa-whatsapp text-4xl"></i>
-        
-                               <div class="text-left">
-                               <div class="text-sm font-normal">Hacer Pedido</div>
-                               <div class="text-lg">+595 975 308118</div>
-                              </div>
-                            </a>
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="mt-8 lg:mt-12 bg-blue-50 rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-blue-200">
+                        <h4 class="font-display text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">¿Necesitas ayuda?</h4>
+                        <p class="text-sm lg:text-base text-gray-600 mb-3 lg:mb-4">
+                            Si tienes dudas sobre nuestros productos, precios o formas de entrega, 
+                            no dudes en contactarnos por cualquiera de estos medios:
+                        </p>
+                        <div class="flex flex-col lg:flex-row justify-center gap-4 lg:gap-6 mt-3 lg:mt-4">
+                            <div class="flex items-center space-x-2 lg:space-x-3">
+                                <i class="fab fa-whatsapp text-green-500 text-lg lg:text-xl"></i>
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-600">Rocio Barrera</p>
+                                    <p class="font-semibold text-gray-800 text-sm lg:text-base">+595 975 308118</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 lg:space-x-3">
+                                <i class="fab fa-whatsapp text-green-500 text-lg lg:text-xl"></i>
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-600">Ronaldo Adorno</p>
+                                    <p class="font-semibold text-gray-800 text-sm lg:text-base">+595 975 318433</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 lg:space-x-3">
+                                <i class="fas fa-clock text-blue-500 text-lg lg:text-xl"></i>
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-600">Horario de Atención</p>
+                                    <p class="font-semibold text-gray-800 text-sm lg:text-base">Lun-Sáb: 6:00 - 18:00</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -311,65 +366,62 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8">
+    <footer class="bg-gray-800 text-white py-8 lg:py-12">
+        <div class="container mx-auto px-4 lg:px-6">
+            <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
                 <div>
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-15 h-15 object-contain">
+                    <div class="flex items-center space-x-2 lg:space-x-3 mb-3 lg:mb-4">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
                         </div>
                         <div>
-                            <h3 class="font-display text-xl font-bold">GRANJA ABUELO FELIPE</h3>
-                            <p class="text-gray-400 text-sm">Leche de Cabra Artesanal</p>
+                            <h3 class="font-display text-lg lg:text-xl font-bold">GRANJA ABUELO FELIPE</h3>
+                            <p class="text-xs lg:text-sm text-gray-400">Leche de Cabra Artesanal</p>
                         </div>
                     </div>
-                    <p class="text-gray-300 leading-relaxed">
-                       Una tradicion familia
+                    <p class="text-xs lg:text-sm text-gray-300 leading-relaxed">
+                        Una tradición familiar dedicada a la producción artesanal de productos lácteos de cabra de la más alta calidad.
                     </p>
                 </div>
                 
                 <div>
-                    <h4 class="font-display text-lg font-bold mb-4">Información de Contacto</h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-green-400">📱</span>
-                            <span>+595 975 308118</span>
+                    <h4 class="font-display text-base lg:text-lg font-bold mb-3 lg:mb-4">Información de Contacto</h4>
+                    <div class="space-y-2 lg:space-y-3">
+                        <div class="flex items-center space-x-2 lg:space-x-3">
+                            <i class="fab fa-whatsapp text-green-400 text-sm"></i>
+                            <span class="text-xs lg:text-sm">+595 975 308118</span>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-blue-400">📍</span>
-                            <span>Granja Abuelo Felipe - Paraguay</span>
+                        <div class="flex items-center space-x-2 lg:space-x-3">
+                            <i class="fab fa-whatsapp text-green-400 text-sm"></i>
+                            <span class="text-xs lg:text-sm">+595 975 318433</span>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-yellow-400">🕒</span>
-                            <span>Lunes a Sábado: 6:00 - 18:00</span>
+                        <div class="flex items-center space-x-2 lg:space-x-3">
+                            <i class="fas fa-map-marker-alt text-blue-400 text-sm"></i>
+                            <span class="text-xs lg:text-sm">Granja Abuelo Felipe - Paraguay</span>
+                        </div>
+                        <div class="flex items-center space-x-2 lg:space-x-3">
+                            <i class="fas fa-clock text-yellow-400 text-sm"></i>
+                            <span class="text-xs lg:text-sm">Lunes a Sábado: 6:00 - 18:00</span>
                         </div>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="font-display text-lg font-bold mb-4">Síguenos</h4>
-                    <p class="text-gray-300 mb-4">Mantente al tanto de nuestras novedades y promociones especiales.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors">
-                            📘
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
-                            📷
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors">
-                            📺
+                    <h4 class="font-display text-base lg:text-lg font-bold mb-3 lg:mb-4">Enlaces Rápidos</h4>
+                    <div class="space-y-1 lg:space-y-2">
+                        <a href="#inicio" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Inicio</a>
+                        <a href="#productos" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Productos</a>
+                        <a href="nosotros.html" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Nosotros</a>
+                        <a href="#contacto" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Contacto</a>
+                        <a href="repartidores-app/" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">
+                            <i class="fas fa-motorcycle mr-1"></i> Zona Repartidores
                         </a>
                     </div>
                 </div>
-            </div>   
-            <!-- En la sección de enlaces rápidos -->
-              <a href="repartidores-app/" class="block text-gray-300 hover:text-green-400 transition-colors">
-                <i class="fas fa-motorcycle mr-1"></i> Zona Repartidores
-              </a>
+            </div>
             
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p class="text-gray-400">
+            <div class="border-t border-gray-700 mt-6 lg:mt-8 pt-6 lg:pt-8 text-center">
+                <p class="text-xs lg:text-sm text-gray-400">
                     © 2024 Granja Abuelo Felipe. Todos los derechos reservados. | Hecho con ❤️ para nuestra comunidad.
                 </p>
             </div>
@@ -377,71 +429,94 @@
     </footer>
 
     <script>
-        // Initialize Vanta.js background
-       // Initialize Vanta.js background
-        VANTA.BIRDS({
-            el: "#vanta-bg",
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.00,
-            minWidth: 200.00,
-            scale: 0.90,
-            scaleMobile: 1.00,
-            backgroundColor: 0x0a6f05,
-            color1: 0xB0C4DE,
-            color2: 0xFFFFFF,
-            colorMode: "lerp",
-            birdSize: 1.20,
-            wingSpan: 10.00,
-            speedLimit: 5.00,
-            separation: 20.00,
-            alignment: 20.00,
-            cohesion: 20.00,
-            quantity: 4.00
-        });
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        // Vanta.js con configuración mejorada para granja
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof VANTA !== 'undefined') {
+                VANTA.BIRDS({
+                    el: "#vanta-bg",
+                    mouseControls: true,
+                    touchControls: true,
+                    gyroControls: false,
+                    minHeight: 200.00,
+                    minWidth: 200.00,
+                    scale: 1.00,
+                    scaleMobile: 1.00,
+                    backgroundColor: 0x0a6f05,
+                    color1: 0x98fb98,
+                    color2: 0x90ee90,
+                    colorMode: "lerp",
+                    birdSize: 1.50,
+                    wingSpan: 15.00,
+                    speedLimit: 4.00,
+                    separation: 30.00,
+                    alignment: 25.00,
+                    cohesion: 25.00,
+                    quantity: 3.00
+                });
+            }
 
-        // Fade in animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Add some interactive effects
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-8px) scale(1.02)';
-            });
+            // Menú desplegable de WhatsApp
+            const dropdownButton = document.getElementById('whatsappDropdownButton');
+            const dropdownMenu = document.getElementById('whatsappDropdown');
+            const chevron = dropdownButton?.querySelector('.fa-chevron-down');
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
+            if (dropdownButton && dropdownMenu && chevron) {
+                dropdownButton.addEventListener('click', function() {
+                    dropdownMenu.classList.toggle('hidden');
+                    chevron.classList.toggle('rotate-180');
+                });
+                
+                document.addEventListener('click', function(event) {
+                    if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                        dropdownMenu.classList.add('hidden');
+                        chevron.classList.remove('rotate-180');
+                    }
+                });
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Fade in animation on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Add some interactive effects
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
             });
         });
-</script>
-
-
+    </script>
+</body>
+</html>
