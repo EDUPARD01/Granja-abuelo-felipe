@@ -1,7 +1,6 @@
 /* Custom styles for Granja Abuelo Felipe */
-
 :root {
-    --primary-green: #2110b9;
+    --primary-green: #10b981;
     --primary-blue: #3b82f6;
     --accent-yellow: #fbbf24;
     --text-dark: #1f2937;
@@ -9,26 +8,72 @@
     --bg-light: #f9fafb;
 }
 
+.font-display { 
+    font-family: 'Playfair Display', serif; 
+}
+
+.font-body { 
+    font-family: 'Inter', sans-serif; 
+}
+
 /* Enhanced animations */
 @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(2deg); }
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+    }
+    50% { 
+        transform: translateY(-20px) rotate(1deg); 
+    }
 }
 
-@keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
-}
-
-@keyframes slideInUp {
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes floatIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* Apply animations */
+.animate-fade-in-up {
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-float-in {
+    animation: floatIn 1s ease-out forwards;
+}
+
+.floating-animation {
+    animation: float 6s ease-in-out infinite;
 }
 
 /* Enhanced product cards */
@@ -92,32 +137,6 @@
     box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
 }
 
-/* Enhanced hero section */
-.hero-content {
-    position: relative;
-    z-index: 2;
-    animation: slideInUp 1s ease-out;
-}
-
-.hero-image {
-    position: relative;
-    animation: float 6s ease-in-out infinite;
-}
-
-.hero-image::after {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    background: linear-gradient(45deg, var(--primary-green), var(--primary-blue));
-    border-radius: 2rem;
-    z-index: -1;
-    opacity: 0.3;
-    animation: pulse-glow 3s ease-in-out infinite;
-}
-
 /* Enhanced navigation */
 nav a {
     position: relative;
@@ -144,6 +163,37 @@ footer {
     background: linear-gradient(135deg, #1f2937, #111827);
 }
 
+/* Fade in animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Backdrop effects */
+.backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+}
+
+/* Text shadows for better readability */
+.text-white {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.text-green-100 {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Rotate utility */
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
 /* Responsive improvements */
 @media (max-width: 768px) {
     .hero-title {
@@ -155,22 +205,12 @@ footer {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
-    .floating-animation {
-        animation: none;
-    }
 }
 
-/* Loading animation */
-.loading {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease;
-}
-
-.loading.loaded {
-    opacity: 1;
-    transform: translateY(0);
+/* Enhanced text selection */
+::selection {
+    background: rgba(16, 185, 129, 0.3);
+    color: var(--text-dark);
 }
 
 /* Custom scrollbar */
@@ -189,113 +229,4 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, var(--primary-blue), var(--primary-green));
-}
-
-/* Enhanced text selection */
-::selection {
-    background: rgba(16, 185, 129, 0.3);
-    color: var(--text-dark);
-}
-
-/* Print styles */
-@media print {
-    .no-print {
-        display: none !important;
-    }
-    
-    body {
-        background: white !important;
-        color: black !important;
-    }
-}
-body {
-  margin: 0;
-  height: 100vh;
-  background: radial-gradient(circle, #1e293b, #0f172a);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.contenedor {
-  perspective: 1000px;
-  width: 300px;
-  height: 300px;
-  position: relative;
-}
-
-.carrusel {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  transform-style: preserve-3d;
-  animation: rotar 20s linear infinite;
-}
-
-.carrusel img {
-  position: absolute;
-  width: 200px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: transform 0.5s, box-shadow 0.3s;
-  cursor: pointer;
-}
-
-/* Distribuye las imágenes en círculo */
-.carrusel img:nth-child(1) { transform: rotateY(0deg) translateZ(350px); }
-.carrusel img:nth-child(2) { transform: rotateY(72deg) translateZ(350px); }
-.carrusel img:nth-child(3) { transform: rotateY(144deg) translateZ(350px); }
-.carrusel img:nth-child(4) { transform: rotateY(216deg) translateZ(350px); }
-.carrusel img:nth-child(5) { transform: rotateY(288deg) translateZ(350px); }
-
-@keyframes rotar {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
-}
-
-/* Efecto hover */
-.carrusel img:hover {
-  transform: scale(1.2) translateZ(400px);
-  box-shadow: 0 0 20px #38bdf8;
-}
-.search-control {
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.search-control input {
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    padding: 8px;
-    width: 200px;
-}
-
-.search-control button {
-    background: #10b981;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.search-control button:hover {
-    background: #059669;
-}
-
-/* Animación para notificaciones */
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-    40% {transform: translateY(-10px);}
-    60% {transform: translateY(-5px);}
-}
-
-.animate-bounce {
-    animation: bounce 2s infinite;
 }
