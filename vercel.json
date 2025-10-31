@@ -1,0 +1,26 @@
+{
+  "rewrites": [
+    {
+      "source": "/inicio",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/productos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contacto", 
+      "destination": "/index.html"
+    },
+    {
+      "source": "/nosotros",
+      "destination": "/nosotros.html"
+    },
+    {
+      "source": "/pedidos",
+      "destination": "/pedidos.html"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+}
