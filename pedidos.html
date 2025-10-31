@@ -18,27 +18,28 @@
         .font-display { font-family: 'Playfair Display', serif; }
         .font-body { font-family: 'Inter', sans-serif; }
         .btn-primary {
-            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
             transition: all 0.3s ease;
         }
         .btn-primary:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
         .btn-secondary {
             background: #f3f4f6;
             color: #4b5563;
             padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
             transition: all 0.3s ease;
         }
         .btn-secondary:hover {
             background: #e5e7eb;
+            transform: scale(1.05);
         }
         .step {
             display: none;
@@ -49,12 +50,13 @@
         .map-container {
             display: none;
             margin-top: 1rem;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             overflow: hidden;
         }
         .product-card {
             transition: all 0.3s ease;
             border: 1px solid #e5e7eb;
+            border-radius: 1rem;
         }
         .product-card:hover {
             transform: translateY(-5px);
@@ -62,27 +64,29 @@
         }
         .quantity-btn {
             transition: all 0.2s ease;
+            border-radius: 50%;
         }
         .quantity-btn:hover {
             background-color: #d1d5db;
+            transform: scale(1.1);
         }
         #interactive-map {
-            height: 400px;
+            height: 300px;
             width: 100%;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             z-index: 1;
         }
         .map-instructions {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             padding: 1rem;
             margin-bottom: 1rem;
         }
         .location-coordinates {
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             padding: 1rem;
             margin-top: 1rem;
         }
@@ -93,23 +97,6 @@
             width: 20px;
             height: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        .custom-marker::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 8px solid #dc2626;
-        }
-        .location-link {
-            color: #2563eb;
-            text-decoration: underline;
-            word-break: break-all;
         }
         .loading-overlay {
             display: none;
@@ -125,7 +112,7 @@
         }
         .loading-spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #25d366;
+            border-top: 4px solid #10b981;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -138,20 +125,21 @@
         .success-message {
             background: #d1fae5;
             border: 1px solid #a7f3d0;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             padding: 1rem;
             margin-top: 1rem;
         }
         .error-message {
             background: #fee2e2;
             border: 1px solid #fecaca;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             padding: 1rem;
             margin-top: 1rem;
         }
         .payment-option {
             transition: all 0.3s ease;
             border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
         }
         .payment-option.selected {
             border-color: #10b981;
@@ -160,17 +148,24 @@
         .shipping-option {
             transition: all 0.3s ease;
             border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
         }
         .shipping-option.selected {
             border-color: #3b82f6;
             background-color: #f0f9ff;
+        }
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
         }
     </style>
 </head>
 <body class="font-body bg-gray-50">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
-        <div class="bg-white rounded-lg p-8 text-center">
+        <div class="bg-white rounded-lg p-6 lg:p-8 text-center">
             <div class="loading-spinner mx-auto mb-4"></div>
             <p class="text-lg font-semibold text-gray-800">Procesando pedido...</p>
             <p class="text-gray-600">Por favor espere un momento</p>
@@ -179,18 +174,18 @@
 
     <!-- Header -->
     <header class="bg-white shadow-lg fixed w-full top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
+        <div class="container mx-auto px-4 lg:px-6 py-3 lg:py-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                        <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-15 h-15 object-contain">
+                <div class="flex items-center space-x-2 lg:space-x-3">
+                    <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                        <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
                     </div>
                     <div>
-                        <h1 class="font-display text-2xl font-bold text-gray-800">GRANJA ABUELO FELIPE</h1>
-                        <p class="text-sm text-gray-600">Leche de Cabra Artesanal</p>
+                        <h1 class="font-display text-xl lg:text-2xl font-bold text-gray-800">GRANJA ABUELO FELIPE</h1>
+                        <p class="text-xs lg:text-sm text-gray-600">Leche de Cabra Artesanal</p>
                     </div>
                 </div>
-                <nav class="hidden md:flex space-x-8">
+                <nav class="hidden lg:flex space-x-6">
                     <a href="index.html" class="text-gray-700 hover:text-green-600 font-medium transition-colors">Inicio</a>
                     <a href="index.html#productos" class="text-gray-700 hover:text-green-600 font-medium transition-colors">Productos</a>
                     <a href="nosotros.html" class="text-gray-700 hover:text-green-600 font-medium transition-colors">Nosotros</a>
@@ -201,10 +196,10 @@
     </header>
 
     <!-- Main Content -->
-    <main class="pt-24 pb-16">
-        <div class="container mx-auto px-6 max-w-4xl">
+    <main class="pt-20 lg:pt-24 pb-12 lg:pb-16">
+        <div class="container mx-auto px-4 lg:px-6 max-w-4xl">
             <!-- Progress Bar -->
-            <div class="mb-8">
+            <div class="mb-6 lg:mb-8">
                 <div class="flex justify-between mb-2">
                     <span class="text-sm font-medium text-green-600">Información Personal</span>
                     <span class="text-sm font-medium text-gray-500">Productos</span>
@@ -216,67 +211,66 @@
             </div>
 
             <!-- Paso 1: Información Personal -->
-            <div id="step1" class="step active bg-white rounded-2xl shadow-lg p-8">
-                <h2 class="font-display text-3xl font-bold text-gray-800 mb-2">Información del Pedido</h2>
-                <p class="text-gray-600 mb-6">Complete sus datos para procesar su pedido</p>
+            <div id="step1" class="step active section-card p-4 lg:p-8">
+                <h2 class="font-display text-2xl lg:text-3xl font-bold text-gray-800 mb-2">Información del Pedido</h2>
+                <p class="text-gray-600 mb-4 lg:mb-6">Complete sus datos para procesar su pedido</p>
                 
-                <div class="space-y-6">
+                <div class="space-y-4 lg:space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
-                        <input type="text" id="customerName" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ingrese su nombre completo" required>
+                        <input type="text" id="customerName" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ingrese su nombre completo" required>
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Número de Teléfono *</label>
-                        <input type="tel" id="customerPhone" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: 0981 123456" required>
+                        <input type="tel" id="customerPhone" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: 0981 123456" required>
                     </div>
                     
-                    <!-- Departamento en lugar de Ciudad -->
+                    <!-- Departamento -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Departamento *</label>
-                        <select id="customerDepartment" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
+                        <select id="customerDepartment" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
                             <option value="">Seleccione un departamento</option>
-                            <!-- Las opciones se cargarán dinámicamente -->
                         </select>
                     </div>
                     
-                    <!-- Distrito (se muestra dinámicamente) -->
+                    <!-- Distrito -->
                     <div id="districtContainer" class="hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Distrito *</label>
-                        <select id="customerDistrict" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
+                        <select id="customerDistrict" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" required>
                             <option value="">Seleccione distrito</option>
                         </select>
                     </div>
 
-                    <!-- Método de Pago (solo para Coronel Oviedo) -->
+                    <!-- Método de Pago -->
                     <div id="paymentMethodContainer" class="hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Método de Pago *</label>
                         <div class="space-y-3">
-                            <div class="payment-option rounded-lg p-4 cursor-pointer" data-value="efectivo">
+                            <div class="payment-option rounded-lg p-3 lg:p-4 cursor-pointer" data-value="efectivo">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center">
                                         <div class="w-3 h-3 bg-green-500 rounded-full hidden"></div>
                                     </div>
-                                    <span class="text-lg">💵 Efectivo al recibir</span>
+                                    <span class="text-base lg:text-lg">💵 Efectivo al recibir</span>
                                 </div>
                                 <p class="text-sm text-gray-600 ml-8 mt-1">Pague cuando reciba su pedido</p>
                             </div>
-                            <div class="payment-option rounded-lg p-4 cursor-pointer" data-value="transferencia">
+                            <div class="payment-option rounded-lg p-3 lg:p-4 cursor-pointer" data-value="transferencia">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center">
                                         <div class="w-3 h-3 bg-green-500 rounded-full hidden"></div>
                                     </div>
-                                    <span class="text-lg">🏦 Transferencia bancaria</span>
+                                    <span class="text-base lg:text-lg">🏦 Transferencia bancaria</span>
                                 </div>
                                 <p class="text-sm text-gray-600 ml-8 mt-1">Realice la transferencia antes de la entrega</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Agencia de Envío (para otras ciudades) -->
+                    <!-- Agencia de Envío -->
                     <div id="shippingAgencyContainer" class="hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Agencia de Envío *</label>
-                        <select id="shippingAgency" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
+                        <select id="shippingAgency" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all">
                             <option value="">Seleccione agencia de envío</option>
                             <option value="tcd">🚚 TCD Envíos</option>
                             <option value="las-golondrinas">🚛 Las Golondrinas</option>
@@ -289,7 +283,7 @@
                     <!-- Campo para otra agencia -->
                     <div id="otherAgencyContainer" class="hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Especifique la agencia *</label>
-                        <input type="text" id="otherAgency" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Nombre de la agencia de envío">
+                        <input type="text" id="otherAgency" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Nombre de la agencia de envío">
                     </div>
                     
                     <!-- Mapa Interactivo para Coronel Oviedo -->
@@ -339,11 +333,11 @@
                     <!-- Dirección/Referencia SOLO para Coronel Oviedo -->
                     <div id="coronelOviedoReference" class="hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Dirección/Referencia *</label>
-                        <textarea id="locationReference" rows="3" class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Casa color azul, portón negro, a 2 cuadras del supermercado..." required></textarea>
+                        <textarea id="locationReference" rows="3" class="w-full p-3 lg:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" placeholder="Ej: Casa color azul, portón negro, a 2 cuadras del supermercado..." required></textarea>
                     </div>
                     
-                    <div class="flex justify-end mt-8">
-                        <button id="nextToStep2" class="btn-primary flex items-center">
+                    <div class="flex justify-end mt-6 lg:mt-8">
+                        <button id="nextToStep2" class="btn-primary flex items-center text-sm lg:text-base">
                             Continuar a Productos <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
@@ -351,111 +345,111 @@
             </div>
             
             <!-- Paso 2: Productos -->
-            <div id="step2" class="step bg-white rounded-2xl shadow-lg p-8">
-                <h2 class="font-display text-3xl font-bold text-gray-800 mb-2">Seleccione sus Productos</h2>
-                <p class="text-gray-600 mb-6">Elija los productos y cantidades deseadas</p>
+            <div id="step2" class="step section-card p-4 lg:p-8">
+                <h2 class="font-display text-2xl lg:text-3xl font-bold text-gray-800 mb-2">Seleccione sus Productos</h2>
+                <p class="text-gray-600 mb-4 lg:mb-6">Elija los productos y cantidades deseadas</p>
                 
-                <div class="space-y-6">
+                <div class="space-y-4 lg:space-y-6">
                     <!-- Leche de Cabra -->
-                    <div class="product-card rounded-xl p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                            <div class="flex-1 mb-4 md:mb-0">
+                    <div class="product-card rounded-xl p-4 lg:p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                            <div class="flex-1 mb-4 lg:mb-0">
                                 <h3 class="font-display text-xl font-bold text-gray-800">Leche de Cabra Fresca</h3>
-                                <p class="text-gray-600 mt-1">Leche 100% natural, sin aditivos ni conservantes</p>
+                                <p class="text-gray-600 mt-1 text-sm lg:text-base">Leche 100% natural, sin aditivos ni conservantes</p>
                                 <div class="flex items-center mt-3">
-                                    <span class="text-2xl font-bold text-green-600">Gs. 25.000</span>
+                                    <span class="text-xl lg:text-2xl font-bold text-green-600">Gs. 25.000</span>
                                     <span class="text-sm text-gray-500 ml-2">1 litro</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="leche" data-action="decrease">-</button>
-                                <span id="leche-quantity" class="w-12 text-center text-xl font-bold">0</span>
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="leche" data-action="increase">+</button>
+                            <div class="flex items-center space-x-3 lg:space-x-4">
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="leche" data-action="decrease">-</button>
+                                <span id="leche-quantity" class="w-10 lg:w-12 text-center text-xl font-bold">0</span>
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="leche" data-action="increase">+</button>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Queso de Cabra -->
-                    <div class="product-card rounded-xl p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                            <div class="flex-1 mb-4 md:mb-0">
+                    <div class="product-card rounded-xl p-4 lg:p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                            <div class="flex-1 mb-4 lg:mb-0">
                                 <h3 class="font-display text-xl font-bold text-gray-800">Queso de Cabra</h3>
-                                <p class="text-gray-600 mt-1">Queso artesanal con sabor suave y textura cremosa</p>
+                                <p class="text-gray-600 mt-1 text-sm lg:text-base">Queso artesanal con sabor suave y textura cremosa</p>
                                 <div class="flex items-center mt-3">
-                                    <span class="text-2xl font-bold text-blue-600">Gs. 180.000</span>
+                                    <span class="text-xl lg:text-2xl font-bold text-blue-600">Gs. 180.000</span>
                                     <span class="text-sm text-gray-500 ml-2">1kg</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="queso" data-action="decrease">-</button>
-                                <span id="queso-quantity" class="w-12 text-center text-xl font-bold">0</span>
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="queso" data-action="increase">+</button>
+                            <div class="flex items-center space-x-3 lg:space-x-4">
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="queso" data-action="decrease">-</button>
+                                <span id="queso-quantity" class="w-10 lg:w-12 text-center text-xl font-bold">0</span>
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="queso" data-action="increase">+</button>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Yogur de Cabra -->
-                    <div class="product-card rounded-xl p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                            <div class="flex-1 mb-4 md:mb-0">
+                    <div class="product-card rounded-xl p-4 lg:p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                            <div class="flex-1 mb-4 lg:mb-0">
                                 <h3 class="font-display text-xl font-bold text-gray-800">Yogur de Cabra Natural</h3>
-                                <p class="text-gray-600 mt-1">Yogur elaborado con leche de cabra fresca, sin azúcar añadida</p>
+                                <p class="text-gray-600 mt-1 text-sm lg:text-base">Yogur elaborado con leche de cabra fresca, sin azúcar añadida</p>
                                 <div class="flex items-center mt-3">
-                                    <span class="text-2xl font-bold text-purple-600">Gs. 25.000</span>
+                                    <span class="text-xl lg:text-2xl font-bold text-purple-600">Gs. 25.000</span>
                                     <span class="text-sm text-gray-500 ml-2">1 litro</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="yogur" data-action="decrease">-</button>
-                                <span id="yogur-quantity" class="w-12 text-center text-xl font-bold">0</span>
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="yogur" data-action="increase">+</button>
+                            <div class="flex items-center space-x-3 lg:space-x-4">
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="yogur" data-action="decrease">-</button>
+                                <span id="yogur-quantity" class="w-10 lg:w-12 text-center text-xl font-bold">0</span>
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="yogur" data-action="increase">+</button>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Dulce de Leche -->
-                    <div class="product-card rounded-xl p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                            <div class="flex-1 mb-4 md:mb-0">
+                    <div class="product-card rounded-xl p-4 lg:p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                            <div class="flex-1 mb-4 lg:mb-0">
                                 <h3 class="font-display text-xl font-bold text-gray-800">Dulce de Leche de Cabra</h3>
-                                <p class="text-gray-600 mt-1">Dulce de leche artesanal con sabor único y cremoso</p>
+                                <p class="text-gray-600 mt-1 text-sm lg:text-base">Dulce de leche artesanal con sabor único y cremoso</p>
                                 <div class="flex items-center mt-3">
-                                    <span class="text-2xl font-bold text-yellow-600">Gs. 60.000</span>
+                                    <span class="text-xl lg:text-2xl font-bold text-yellow-600">Gs. 60.000</span>
                                     <span class="text-sm text-gray-500 ml-2">1Kg</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="dulce" data-action="decrease">-</button>
-                                <span id="dulce-quantity" class="w-12 text-center text-xl font-bold">0</span>
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="dulce" data-action="increase">+</button>
+                            <div class="flex items-center space-x-3 lg:space-x-4">
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="dulce" data-action="decrease">-</button>
+                                <span id="dulce-quantity" class="w-10 lg:w-12 text-center text-xl font-bold">0</span>
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="dulce" data-action="increase">+</button>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Kit de Degustación -->
-                    <div class="product-card rounded-xl p-6">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between">
-                            <div class="flex-1 mb-4 md:mb-0">
+                    <div class="product-card rounded-xl p-4 lg:p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between">
+                            <div class="flex-1 mb-4 lg:mb-0">
                                 <h3 class="font-display text-xl font-bold text-gray-800">Kit de Degustación</h3>
-                                <p class="text-gray-600 mt-1">Incluye: leche, queso, yogur y dulce de leche</p>
+                                <p class="text-gray-600 mt-1 text-sm lg:text-base">Incluye: leche, queso, yogur y dulce de leche</p>
                                 <div class="flex items-center mt-3">
-                                    <span class="text-2xl font-bold text-pink-600">Gs. 60.000</span>
+                                    <span class="text-xl lg:text-2xl font-bold text-pink-600">Gs. 60.000</span>
                                     <span class="text-sm text-gray-500 ml-2">Kit completo</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-4">
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="kit" data-action="decrease">-</button>
-                                <span id="kit-quantity" class="w-12 text-center text-xl font-bold">0</span>
-                                <button class="quantity-btn bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="kit" data-action="increase">+</button>
+                            <div class="flex items-center space-x-3 lg:space-x-4">
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="kit" data-action="decrease">-</button>
+                                <span id="kit-quantity" class="w-10 lg:w-12 text-center text-xl font-bold">0</span>
+                                <button class="quantity-btn bg-gray-200 w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-lg font-bold" data-product="kit" data-action="increase">+</button>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="flex justify-between mt-8">
-                        <button id="backToStep1" class="btn-secondary flex items-center">
+                    <div class="flex justify-between mt-6 lg:mt-8">
+                        <button id="backToStep1" class="btn-secondary flex items-center text-sm lg:text-base">
                             <i class="fas fa-arrow-left mr-2"></i> Volver
                         </button>
-                        <button id="nextToStep3" class="btn-primary flex items-center">
+                        <button id="nextToStep3" class="btn-primary flex items-center text-sm lg:text-base">
                             Continuar a Confirmación <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
@@ -463,193 +457,194 @@
             </div>
             
             <!-- Paso 3: Confirmación -->
-<div id="step3" class="step bg-white rounded-2xl shadow-lg p-8">
-    <h2 class="font-display text-3xl font-bold text-gray-800 mb-2">Confirmación del Pedido</h2>
-    <p class="text-gray-600 mb-6">Revise su pedido antes de enviarlo al sistema</p>
-    
-    <div class="space-y-6">
-        <!-- Información del Cliente -->
-        <div class="bg-green-50 p-6 rounded-xl border border-green-200">
-            <h3 class="font-display text-xl font-bold text-gray-800 mb-4">Información del Cliente</h3>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <p class="text-sm text-gray-600">Nombre</p>
-                    <p id="summary-name" class="font-medium text-gray-800"></p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Teléfono</p>
-                    <p id="summary-phone" class="font-medium text-gray-800"></p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Departamento</p>
-                    <p id="summary-department" class="font-medium text-gray-800"></p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Distrito</p>
-                    <p id="summary-district" class="font-medium text-gray-800"></p>
-                </div>
-                <div id="summary-payment-container" class="hidden">
-                    <p class="text-sm text-gray-600">Método de Pago</p>
-                    <p id="summary-payment" class="font-medium text-gray-800"></p>
-                </div>
-                <div id="summary-shipping-container" class="hidden">
-                    <p class="text-sm text-gray-600">Agencia de Envío</p>
-                    <p id="summary-shipping" class="font-medium text-gray-800"></p>
-                </div>
-            </div>
-            <div class="mt-4">
-                <p class="text-sm text-gray-600">Información de Entrega</p>
-                <p id="summary-location" class="font-medium text-gray-800"></p>
-            </div>
-            <div class="mt-4" id="summary-location-link-container">
-                <p class="text-sm text-gray-600">Enlace de ubicación:</p>
-                <a id="summary-location-link" href="#" target="_blank" class="location-link text-sm"></a>
-            </div>
-        </div>
-        
-        <!-- Productos Seleccionados -->
-        <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
-            <h3 class="font-display text-xl font-bold text-gray-800 mb-4">Productos Seleccionados</h3>
-            <div id="summary-products" class="space-y-3"></div>
-            <div class="mt-6 pt-4 border-t border-blue-200">
-                <div class="flex justify-between items-center">
-                    <span class="text-lg font-bold text-gray-800">Total del Pedido:</span>
-                    <span id="summary-total" class="text-2xl font-bold text-green-600">Gs. 0</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mensaje de Advertencia -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
-            <div class="flex items-start space-x-3">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-yellow-800 text-lg mb-2"> Importante: Cancelación de Pedidos</h4>
-                    <p class="text-yellow-700 mb-3">
-                        En caso de que desee cancelar o modificar su pedido, por favor póngase en contacto por WhatsApp a los siguientes números:
-                    </p>
-                    <div class="space-y-2">
-                        <div class="flex items-center space-x-2">
-                            <a href="https://wa.me/595975308118" 
-                               target="_blank" 
-                               class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-                                <i class="fab fa-whatsapp"></i>
-                                <span>Rocio Barrera</span>
-                            </a>
+            <div id="step3" class="step section-card p-4 lg:p-8">
+                <h2 class="font-display text-2xl lg:text-3xl font-bold text-gray-800 mb-2">Confirmación del Pedido</h2>
+                <p class="text-gray-600 mb-4 lg:mb-6">Revise su pedido antes de enviarlo al sistema</p>
+                
+                <div class="space-y-4 lg:space-y-6">
+                    <!-- Información del Cliente -->
+                    <div class="bg-green-50 p-4 lg:p-6 rounded-xl border border-green-200">
+                        <h3 class="font-display text-xl font-bold text-gray-800 mb-3 lg:mb-4">Información del Cliente</h3>
+                        <div class="grid md:grid-cols-2 gap-3 lg:gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Nombre</p>
+                                <p id="summary-name" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Teléfono</p>
+                                <p id="summary-phone" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Departamento</p>
+                                <p id="summary-department" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Distrito</p>
+                                <p id="summary-district" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div id="summary-payment-container" class="hidden">
+                                <p class="text-sm text-gray-600">Método de Pago</p>
+                                <p id="summary-payment" class="font-medium text-gray-800"></p>
+                            </div>
+                            <div id="summary-shipping-container" class="hidden">
+                                <p class="text-sm text-gray-600">Agencia de Envío</p>
+                                <p id="summary-shipping" class="font-medium text-gray-800"></p>
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <a href="https://wa.me/595975318433" 
-                               target="_blank" 
-                               class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-                                <i class="fab fa-whatsapp"></i>
-                                <span>Ronaldo Adorno</span>
-                            </a>
+                        <div class="mt-3 lg:mt-4">
+                            <p class="text-sm text-gray-600">Información de Entrega</p>
+                            <p id="summary-location" class="font-medium text-gray-800"></p>
+                        </div>
+                        <div class="mt-3 lg:mt-4" id="summary-location-link-container">
+                            <p class="text-sm text-gray-600">Enlace de ubicación:</p>
+                            <a id="summary-location-link" href="#" target="_blank" class="location-link text-sm"></a>
                         </div>
                     </div>
-                    <p class="text-yellow-600 text-sm mt-3">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Una vez enviado el pedido, tendrá un tiempo limitado para realizar cancelaciones.
-                    </p>
-                </div>
-            </div>
-        </div>
+                    
+                    <!-- Productos Seleccionados -->
+                    <div class="bg-blue-50 p-4 lg:p-6 rounded-xl border border-blue-200">
+                        <h3 class="font-display text-xl font-bold text-gray-800 mb-3 lg:mb-4">Productos Seleccionados</h3>
+                        <div id="summary-products" class="space-y-2 lg:space-y-3"></div>
+                        <div class="mt-4 lg:mt-6 pt-3 lg:pt-4 border-t border-blue-200">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-gray-800">Total del Pedido:</span>
+                                <span id="summary-total" class="text-xl lg:text-2xl font-bold text-green-600">Gs. 0</span>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Mensajes de estado -->
-        <div id="successMessage" class="success-message hidden">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                <div>
-                    <h4 class="font-bold text-green-800">¡Pedido enviado con éxito!</h4>
-                    <p class="text-green-700">Su pedido ha sido procesado correctamente. Nos contactaremos pronto.</p>
-                </div>
-            </div>
-        </div>
+                    <!-- Mensaje de Advertencia -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 lg:p-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 text-lg lg:text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-yellow-800 text-base lg:text-lg mb-2"> Importante: Cancelación de Pedidos</h4>
+                                <p class="text-yellow-700 mb-3 text-sm lg:text-base">
+                                    En caso de que desee cancelar o modificar su pedido, por favor póngase en contacto por WhatsApp a los siguientes números:
+                                </p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-2">
+                                        <a href="https://wa.me/595975308118" 
+                                           target="_blank" 
+                                           class="bg-green-500 hover:bg-green-600 text-white px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 text-sm lg:text-base">
+                                            <i class="fab fa-whatsapp"></i>
+                                            <span>Rocio Barrera</span>
+                                        </a>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <a href="https://wa.me/595975318433" 
+                                           target="_blank" 
+                                           class="bg-green-500 hover:bg-green-600 text-white px-3 lg:px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 text-sm lg:text-base">
+                                            <i class="fab fa-whatsapp"></i>
+                                            <span>Ronaldo Adorno</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="text-yellow-600 text-xs lg:text-sm mt-3">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Una vez enviado el pedido, tendrá un tiempo limitado para realizar cancelaciones.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-        <div id="errorMessage" class="error-message hidden">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
-                <div>
-                    <h4 class="font-bold text-red-800">Error al enviar el pedido</h4>
-                    <p class="text-red-700">Por favor, contacte al <strong>0976 463756</strong> para completar su pedido.</p>
+                    <!-- Mensajes de estado -->
+                    <div id="successMessage" class="success-message hidden">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-green-500 text-lg lg:text-xl"></i>
+                            <div>
+                                <h4 class="font-bold text-green-800">¡Pedido enviado con éxito!</h4>
+                                <p class="text-green-700">Su pedido ha sido procesado correctamente. Nos contactaremos pronto.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="errorMessage" class="error-message hidden">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-lg lg:text-xl"></i>
+                            <div>
+                                <h4 class="font-bold text-red-800">Error al enviar el pedido</h4>
+                                <p class="text-red-700">Por favor, contacte al <strong>0976 463756</strong> para completar su pedido.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-6 lg:mt-8">
+                        <button id="backToStep2" class="btn-secondary flex items-center text-sm lg:text-base">
+                            <i class="fas fa-arrow-left mr-2"></i> Volver a Productos
+                        </button>
+                        <button id="sendOrder" class="btn-primary flex items-center text-sm lg:text-base px-6 lg:px-8 py-3 lg:py-4">
+                            <i class="fas fa-paper-plane mr-2"></i> Confirmar y Enviar Pedido
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="flex justify-between mt-8">
-            <button id="backToStep2" class="btn-secondary flex items-center">
-                <i class="fas fa-arrow-left mr-2"></i> Volver a Productos
-            </button>
-            <button id="sendOrder" class="btn-primary flex items-center text-lg px-8 py-4">
-                <i class="fas fa-paper-plane mr-2"></i> Confirmar y Enviar Pedido
-            </button>
-        </div>
-    </div>
-</div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8">
+    <footer class="bg-gray-800 text-white py-8 lg:py-12">
+        <div class="container mx-auto px-4 lg:px-6">
+            <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
                 <div>
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-15 h-15 object-contain">
+                    <div class="flex items-center space-x-2 lg:space-x-3 mb-3 lg:mb-4">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
                         </div>
                         <div>
-                            <h3 class="font-display text-xl font-bold">GRANJA ABUELO FELIPE</h3>
-                            <p class="text-gray-400 text-sm">Leche de Cabra Artesanal</p>
+                            <h3 class="font-display text-lg lg:text-xl font-bold">GRANJA ABUELO FELIPE</h3>
+                            <p class="text-xs lg:text-sm text-gray-400">Leche de Cabra Artesanal</p>
                         </div>
                     </div>
-                    <p class="text-gray-300 leading-relaxed">
+                    <p class="text-xs lg:text-sm text-gray-300 leading-relaxed">
                         Una tradición familiar dedicada a la producción artesanal de productos lácteos de cabra de la más alta calidad.
                     </p>
                 </div>
                 
                 <div>
-                    <h4 class="font-display text-lg font-bold mb-4">Información de Contacto</h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3">
+                    <h4 class="font-display text-base lg:text-lg font-bold mb-3 lg:mb-4">Información de Contacto</h4>
+                    <div class="space-y-2 lg:space-y-3">
+                        <div class="flex items-center space-x-2 lg:space-x-3">
                             <span class="text-green-400">📱</span>
-                            <span>0975 318433</span>
+                            <span class="text-xs lg:text-sm">0975 318433</span>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 lg:space-x-3">
                             <span class="text-green-400">📱</span>
-                            <span>0975 308118</span>
+                            <span class="text-xs lg:text-sm">0975 308118</span>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 lg:space-x-3">
                             <span class="text-blue-400">📍</span>
-                            <span>Granja Abuelo Felipe - Paraguay</span>
+                            <span class="text-xs lg:text-sm">Granja Abuelo Felipe - Paraguay</span>
                         </div>
-                        <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 lg:space-x-3">
                             <span class="text-yellow-400">🕒</span>
-                            <span>Lunes a Sábado: 6:00 - 18:00</span>
+                            <span class="text-xs lg:text-sm">Lunes a Sábado: 6:00 - 18:00</span>
                         </div>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="font-display text-lg font-bold mb=4">Enlaces Rápidos</h4>
-                    <div class="space-y-2">
-                        <a href="index.html" class="block text-gray-300 hover:text-green-400 transition-colors">Inicio</a>
-                        <a href="index.html#productos" class="block text-gray-300 hover:text-green-400 transition-colors">Productos</a>
-                        <a href="nosotros.html" class="block text-gray-300 hover:text-green-400 transition-colors">Nosotros</a>
-                        <a href="index.html#contacto" class="block text-gray-300 hover:text-green-400 transition-colors">Contacto</a>
+                    <h4 class="font-display text-base lg:text-lg font-bold mb-3 lg:mb-4">Enlaces Rápidos</h4>
+                    <div class="space-y-1 lg:space-y-2">
+                        <a href="index.html" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Inicio</a>
+                        <a href="index.html#productos" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Productos</a>
+                        <a href="nosotros.html" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Nosotros</a>
+                        <a href="index.html#contacto" class="block text-xs lg:text-sm text-gray-300 hover:text-green-400 transition-colors">Contacto</a>
                     </div>
                 </div>
             </div>
             
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p class="text-gray-400">
+            <div class="border-t border-gray-700 mt-6 lg:mt-8 pt-6 lg:pt-8 text-center">
+                <p class="text-xs lg:text-sm text-gray-400">
                     © 2024 Granja Abuelo Felipe. Todos los derechos reservados. | Hecho con ❤️ para nuestra comunidad.
                 </p>
             </div>
         </div>
     </footer>
 
-    <!-- Leaflet JS -->
+     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
