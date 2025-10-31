@@ -177,11 +177,13 @@
         <div class="container mx-auto px-4 lg:px-6 py-3 lg:py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2 lg:space-x-3">
-                    <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
-                        <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
-                    </div>
+                    <a href="index.html" class="flex items-center">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
+                        </div>
+                    </a>
                     <div>
-                        <h1 class="font-display text-xl lg:text-2xl font-bold text-gray-800">GRANJA ABUELO FELIPE</h1>
+                        <p class="font-display text-xl lg:text-2xl font-bold text-gray-800">GRANJA ABUELO FELIPE</p>
                         <p class="text-xs lg:text-sm text-gray-600">Leche de Cabra Artesanal</p>
                     </div>
                 </div>
@@ -201,9 +203,9 @@
             <!-- Progress Bar -->
             <div class="mb-6 lg:mb-8">
                 <div class="flex justify-between mb-2">
-                    <span class="text-sm font-medium text-green-600">Información Personal</span>
-                    <span class="text-sm font-medium text-gray-500">Productos</span>
-                    <span class="text-sm font-medium text-gray-500">Confirmación</span>
+                    <span id="step1-label" class="text-sm font-medium text-green-600">Información Personal</span>
+                    <span id="step2-label" class="text-sm font-medium text-gray-500">Productos</span>
+                    <span id="step3-label" class="text-sm font-medium text-gray-500">Confirmación</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
                     <div id="progress-bar" class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: 33%"></div>
@@ -590,9 +592,11 @@
             <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
                 <div>
                     <div class="flex items-center space-x-2 lg:space-x-3 mb-3 lg:mb-4">
-                        <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
-                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
-                        </div>
+                        <a href="index.html" class="flex items-center">
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                                <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
+                            </div>
+                        </a>
                         <div>
                             <h3 class="font-display text-lg lg:text-xl font-bold">GRANJA ABUELO FELIPE</h3>
                             <p class="text-xs lg:text-sm text-gray-400">Leche de Cabra Artesanal</p>
@@ -1188,10 +1192,49 @@
             steps.forEach(s => s.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
             currentStep = step;
+            
+            // Actualizar la barra de progreso y los textos
+            updateProgressBarAndLabels(step);
         }
 
         function updateProgressBar(percentage) {
             progressBar.style.width = `${percentage}%`;
+        }
+
+        // ==================== ACTUALIZAR BARRA DE PROGRESO Y ETIQUETAS ====================
+        function updateProgressBarAndLabels(step) {
+            // Actualizar la barra de progreso
+            let percentage = 33;
+            if (step === 2) percentage = 66;
+            if (step === 3) percentage = 100;
+            updateProgressBar(percentage);
+            
+            // Actualizar los textos de los pasos
+            const step1Label = document.getElementById('step1-label');
+            const step2Label = document.getElementById('step2-label');
+            const step3Label = document.getElementById('step3-label');
+            
+            // Resetear todos los textos a gris
+            step1Label.classList.remove('text-green-600');
+            step1Label.classList.add('text-gray-500');
+            step2Label.classList.remove('text-green-600');
+            step2Label.classList.add('text-gray-500');
+            step3Label.classList.remove('text-green-600');
+            step3Label.classList.add('text-gray-500');
+            
+            // Aplicar color verde al paso actual y a los anteriores
+            if (step >= 1) {
+                step1Label.classList.remove('text-gray-500');
+                step1Label.classList.add('text-green-600');
+            }
+            if (step >= 2) {
+                step2Label.classList.remove('text-gray-500');
+                step2Label.classList.add('text-green-600');
+            }
+            if (step >= 3) {
+                step3Label.classList.remove('text-gray-500');
+                step3Label.classList.add('text-green-600');
+            }
         }
 
         // ==================== RESUMEN DEL PEDIDO ====================
@@ -1258,7 +1301,6 @@
         nextToStep2.addEventListener('click', () => {
             if (validateStep1()) {
                 changeStep(2);
-                updateProgressBar(66);
             }
         });
 
@@ -1266,18 +1308,15 @@
             if (validateStep2()) {
                 updateOrderSummary();
                 changeStep(3);
-                updateProgressBar(100);
             }
         });
 
         backToStep1.addEventListener('click', () => {
             changeStep(1);
-            updateProgressBar(33);
         });
 
         backToStep2.addEventListener('click', () => {
             changeStep(2);
-            updateProgressBar(66);
         });
 
         // Botón de enviar pedido
