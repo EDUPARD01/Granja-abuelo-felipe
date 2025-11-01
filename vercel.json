@@ -28,3 +28,21 @@
   "cleanUrls": true,
   "trailingSlash": false
 }
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/productos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/contacto", 
+      "destination": "/index.html"
+    },
+    {
+      "source": "/inicio",
+      "destination": "/index.html"
+    }
+  ]
+}
