@@ -10,7 +10,136 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.birds.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --primary-blue: #3b82f6;
+            --bg-light: #f9fafb;
+        }
+        
+        .font-display { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
+        
+        /* Enhanced navigation */
+        nav a {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue));
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-blue), var(--primary-blue));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--primary-green), var(--primary-green));
+        }
+
+        /* Animaciones */
+        @keyframes slide-in-left {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float-in {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .animate-slide-in-left {
+            animation: slide-in-left 0.8s ease-out forwards;
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.8s ease-out forwards;
+        }
+
+        .animate-float-in {
+            animation: float-in 1s ease-out forwards;
+        }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
 </head>
 <body class="font-body">
     <!-- Header -->
@@ -18,9 +147,11 @@
         <div class="container mx-auto px-4 lg:px-6 py-3 lg:py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2 lg:space-x-3">
-                    <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
-                        <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
-                    </div>
+                    <a href="/" class="flex items-center">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
+                        </div>
+                    </a>
                     <div>
                         <h1 class="font-display text-xl lg:text-3xl font-bold text-gray-800">GRANJA ABUELO FELIPE</h1>
                         <p class="text-xs lg:text-sm text-gray-600">Leche de Cabra Artesanal</p>
@@ -62,7 +193,7 @@
                             Ver Productos
                         </a>
                         
-                        <a href="pedidos.html" target="_blank" 
+                        <a href="pedidos.html" 
                            class="bg-green-500 hover:bg-green-600 text-white px-6 lg:px-8 py-3 lg:py-4 rounded-full font-semibold text-center inline-flex items-center justify-center gap-2 lg:gap-3 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl backdrop-blur-sm bg-green-500/95 text-sm lg:text-base">
                             <i class="fas fa-shopping-basket text-xl lg:text-2xl"></i> 
                             Hacer Pedido
@@ -130,7 +261,7 @@
                                 <span class="text-xs lg:text-sm text-gray-500">1kg</span>
                             </div>
                         </div>
-                        <a href="pedidos.html" target="_blank" class="block w-full bg-blue-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mt-auto text-sm lg:text-base">
+                        <a href="pedidos.html" class="block w-full bg-blue-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mt-auto text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
@@ -153,7 +284,7 @@
                             <span class="text-xl lg:text-2xl font-bold text-purple-600">Gs. 25.000</span>
                             <span class="text-xs lg:text-sm text-gray-500">1 litro</span>
                         </div>
-                        <a href="pedidos.html" target="_blank" class="block w-full bg-purple-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors mt-auto text-sm lg:text-base">
+                        <a href="pedidos.html" class="block w-full bg-purple-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors mt-auto text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
@@ -173,7 +304,7 @@
                             <span class="text-xl lg:text-2xl font-bold text-yellow-600">Gs. 60.000</span>
                             <span class="text-xs lg:text-sm text-gray-500">1Kg</span>
                         </div>
-                        <a href="pedidos.html" target="_blank" class="block w-full bg-yellow-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors mt-auto text-sm lg:text-base">
+                        <a href="pedidos.html" class="block w-full bg-yellow-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors mt-auto text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
@@ -196,7 +327,7 @@
                             <span class="text-xl lg:text-2xl font-bold text-pink-600">Gs. 60.000</span>
                             <span class="text-xs lg:text-sm text-gray-500">Kit completo</span>
                         </div>
-                        <a href="pedidos.html" target="_blank" class="block w-full bg-pink-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors text-sm lg:text-base">
+                        <a href="pedidos.html" class="block w-full bg-pink-600 text-white text-center py-2 lg:py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors text-sm lg:text-base">
                             Hacer Pedido
                         </a>
                     </div>
@@ -371,9 +502,11 @@
             <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
                 <div>
                     <div class="flex items-center space-x-2 lg:space-x-3 mb-3 lg:mb-4">
-                        <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
-                            <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
-                        </div>
+                        <a href="/" class="flex items-center">
+                            <div class="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center">
+                                <img src="images/Copia de Copia de Copia de Granja Abuelo Felipe (1).png" alt="Logo Granja Abuelo Felipe" class="w-full h-full object-contain">
+                            </div>
+                        </a>
                         <div>
                             <h3 class="font-display text-lg lg:text-xl font-bold">GRANJA ABUELO FELIPE</h3>
                             <p class="text-xs lg:text-sm text-gray-400">Leche de Cabra Artesanal</p>
@@ -474,12 +607,16 @@
                 });
             }
 
-            // Smooth scrolling for navigation links
+            // Navegación suave TOTALMENTE transparente - URL siempre limpia
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    const target = document.getElementById(targetId);
+                    
                     if (target) {
+                        // Solo desplazarse, sin tocar la URL
                         target.scrollIntoView({
                             behavior: 'smooth',
                             block: 'start'
@@ -517,27 +654,6 @@
                 });
             });
         });
-         
-// Navegación suave TOTALMENTE transparente - URL siempre limpia
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href').substring(1);
-            const target = document.getElementById(targetId);
-            
-            if (target) {
-                // Solo desplazarse, sin tocar la URL
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-});
-
     </script>
 </body>
 </html>
